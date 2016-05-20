@@ -1,0 +1,242 @@
+body 
+{
+   background-size: 110%; 
+}
+       
+header, section, footer, p
+{
+    text-align: center;    
+}
+
+hr
+{
+    border-color: black;
+    clear: both;
+}
+
+li
+{
+	list-style: none;
+}
+       
+#main
+{
+    max-width: 800px;
+    padding: 10px 50px;
+    background-color: white;
+    border: 1px solid #003300;
+    margin-top: 10px;
+}    
+
+
+       
+
+/**
+ * Header styles
+ */
+header 
+{
+    margin-bottom: 30px;
+}
+
+.header-top
+{
+    font: bold 16px Tahoma;
+    
+}
+
+.header-text-top
+{
+    font: bold 26px Georgia;
+    
+}
+
+.header-img 
+{
+    max-width: 630px;
+}
+
+h1.header-text-bottom
+{
+	margin: 0 0 40px;
+	font-size: 50px;
+}      
+      
+p.header-text-bottom
+{
+    margin-bottom: -10px;	
+}   
+   
+.header-text-bottom
+{
+    font-family: Georgia;
+    color: #0000CC;
+    font-size: 48px; 
+    line-height: 115%;
+    text-align: center; 
+}
+
+/* Wouldn't it be easier just to make the first line red? */
+.header-bottom
+{
+    font: bold 18px Georgia;
+    color: red;
+   
+}
+
+.header-bottom span
+{
+	color: black;
+	font-size: 16px;
+}
+/* End question*/
+       
+.scroll
+{
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.jumbotron
+{
+	background-color: white;
+}
+
+
+/**
+ * Survey styles
+*/
+
+/**** QUESTION: use strong?*/
+#survey 
+{
+    text-align: left;
+    font: bold 16px Arial;
+}
+
+.error
+{
+	color: red
+}
+
+.error-message
+{
+	color: red;
+	padding-left: 20px;
+	display: none;
+}
+
+.answers 
+{
+    margin: 20px 0;
+}      
+
+li.answer
+{
+    margin-bottom: 5px;
+    
+}
+
+.answer label 
+{
+    font: normal 16px Arial;
+    display: inline;
+    height: auto;
+}
+
+/** End question */
+
+.input-container
+{
+	margin: 30px 0;
+}
+
+.signup-form
+{
+	width: 400px;
+	margin: 10px auto;
+	text-align: center;
+}
+
+.signup
+{
+    width: 100px;
+    
+}
+
+.submit-btn
+{
+	 font-family: Arial; 
+	 font-weight: 700;
+	 margin-top: 15px;
+	 
+	 display: inline-block;
+}
+
+
+
+
+/**
+ * Disclaimer styles
+ */
+
+.disclaimer
+{
+    font: normal 10.0pt Arial, sans-serif; 
+    color: black;     
+}
+
+.note
+{
+    font: bold 13px Arial; 
+    color: maroon;
+}    
+
+.privacy-link
+{
+	color: #0645AD; 
+	text-decoration: underline;
+	font-weight: bold; 
+}
+
+
+
+
+/**
+ *  Footer styles
+ */
+footer
+{
+    color: #808080;
+    font: normal 10.0pt Arial, sans-serif;
+    padding: 25px 0;
+    margin:25px 0;
+    background-color: #f3f2f2;
+}
+
+footer ul
+{
+	margin: 0;
+	padding: 0;
+}
+
+footer li
+{
+	display: inline-block;
+    
+}
+
+footer li:after
+{
+	content: " | ";
+}
+
+footer li.last:after
+{
+	content: none;
+}
+
+footer a
+{
+	color: #808080;
+}

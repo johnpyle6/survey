@@ -1,0 +1,524 @@
+body 
+{
+   background-size: 110%; 
+}
+       
+header, section, footer, p
+{
+    text-align: center;    
+}
+
+hr
+{
+    border-color: black;
+    clear: both;
+}
+
+li
+{
+    list-style: none;
+}
+       
+#main
+{
+    max-width: 800px;
+    padding: 10px 50px;
+    background-color: white;
+    border: 1px solid #003300;
+    margin-top: 10px;
+}    
+
+
+       
+
+/**
+ * Header styles
+ */
+header 
+{
+    margin-bottom: 30px;
+}
+
+.header-top
+{
+    font: bold 16px Tahoma;
+    
+}
+
+.header-text-top
+{
+    font: bold 26px Georgia;
+    
+}
+
+.header-img 
+{
+    max-width: 630px;
+}
+
+h1.header-text-bottom
+{
+    margin: 0 0 40px;
+    font-size: 50px;
+}      
+      
+p.header-text-bottom
+{
+    margin-bottom: -10px;   
+}   
+   
+.header-text-bottom
+{
+    font-family: Georgia;
+    color: #0000CC;
+    font-size: 48px; 
+    line-height: 115%;
+    text-align: center; 
+}
+
+/* Wouldn't it be easier just to make the first line red? */
+.header-bottom
+{
+    font: bold 18px Georgia;
+    color: red;
+   
+}
+
+.header-bottom span
+{
+    color: black;
+    font-size: 16px;
+}
+/* End question*/
+       
+.scroll
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.jumbotron
+{
+    background-color: white;
+}
+
+
+/**
+ * Survey styles
+*/
+
+/**** QUESTION: use strong?*/
+#survey 
+{
+    text-align: left;
+    font: bold 16px Arial;
+}
+
+.error
+{
+    color: red
+}
+
+.error-message
+{
+    color: red;
+    padding-left: 20px;
+    display: none;
+}
+
+.answers 
+{
+    margin: 20px 0;
+}      
+
+li.answer
+{
+    margin-bottom: 5px;
+    
+}
+
+.answer label 
+{
+    font: normal 16px Arial;
+    display: inline;
+    height: auto;
+}
+
+/** End question */
+
+.input-container
+{
+    margin: 30px 0;
+}
+
+.signup-form
+{
+    width: 400px;
+    margin: 10px auto;
+    text-align: center;
+}
+
+.signup
+{
+    width: 100px;
+    
+}
+
+.submit-btn
+{
+     font-family: Arial; 
+     font-weight: 700;
+     margin-top: 15px;
+     
+     display: inline-block;
+}
+
+
+
+
+/**
+ * Disclaimer styles
+ */
+
+.disclaimer
+{
+    font: normal 10.0pt Arial, sans-serif; 
+    color: black;     
+}
+
+.note
+{
+    font: bold 13px Arial; 
+    color: maroon;
+}    
+
+.privacy-link
+{
+    color: #0645AD; 
+    text-decoration: underline;
+    font-weight: bold; 
+}
+
+
+
+
+/**
+ *  Footer styles
+ */
+footer
+{
+    color: #808080;
+    font: normal 10.0pt Arial, sans-serif;
+    padding: 25px 0;
+    margin:25px 0;
+    background-color: #f3f2f2;
+}
+
+footer ul
+{
+    margin: 0;
+    padding: 0;
+}
+
+footer li
+{
+    display: inline-block;
+    
+}
+
+footer li:after
+{
+    content: " | ";
+}
+
+footer li.last:after
+{
+    content: none;
+}
+
+footer a
+{
+    color: #808080;
+}
+ 
+ 
+ 
+ 
+
+.thankyou
+{
+    text-align: center;
+    color: #CC0000;
+}
+
+.red
+{
+    font: bold 18px Arial;
+    color: red;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.thankyou-body 
+{
+    text-align: left;
+    font: normal 16px Arial;
+} 
+ 
+
+.top-link
+{
+    font-size: 16px;
+    
+}
+
+.bracelet-link
+{
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+    color: blue;
+} 
+ 
+ 
+ 
+ 
+/**
+ *  Footer styles
+ */
+footer
+{
+    color: #808080;
+    font: normal 10.0pt Arial, sans-serif;
+    padding: 25px 0;
+    margin:25px 0;
+    background-color: #f3f2f2;
+}
+
+footer ul
+{
+    margin: 0;
+    padding: 0;
+}
+
+footer li
+{
+    display: inline-block;
+    
+}
+
+footer li:after
+{
+    content: " | ";
+}
+
+footer li.last:after
+{
+    content: none;
+}
+
+footer a
+{
+    color: #808080;
+}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+       
+section#survey 
+{
+    text-align: left;
+    font: bold 16px Arial;
+}
+
+
+      
+section#survey li
+{
+    list-style: none;
+    font: normal 16px Arial;
+}
+
+      
+.trump
+{
+    font-family: Georgia;
+    color: #0000CC;
+    font-size: 48px; 
+    line-height: 115%; 
+}
+       
+.jobs
+{
+    font: bold 26px Georgia;
+    
+}
+       
+.trump-image
+{
+    max-width: 600px;
+    max-height: 399px;
+}
+       
+.vote
+{
+    font: bold 18px Georgia;
+    color: red;
+}    
+
+.vote span
+{
+	color: black;
+	font-size: 16px;
+}
+       
+.note
+{
+    font: bold 13px Arial; 
+    color: maroon;
+}    
+       
+.disclaimer
+{
+    font: normal 10.0pt Arial, sans-serif; 
+    color: black;     
+}
+
+.privacy-link
+{
+	color: #0645AD; 
+	text-decoration: underline;
+	font-weight: bold; 
+}
+
+.signup-form
+{
+	margin: 30px;
+}
+
+.signup
+{
+	display: inline-block;
+	width: 120px;
+	text-align: right;
+	margin-bottom: 10px;
+}
+
+input[type="submit"]
+{
+	 font-family: Arial; 
+	 font-weight: 700;
+	 margin-top: 15px;
+	 height: 30px;
+	 display: inline-block;
+}
+
+
+footer
+{
+    color: #000000;
+    font: normal 10.0pt Arial, sans-serif;
+}
+
+footer a
+{
+	color: #000000;
+}
+
+
+#date
+{
+    font: bold 16px Tahoma;
+    
+}
+
+section#newhead
+{
+	margin: 20px;
+}
+       
+img.headerimg
+{
+
+}
+
+#re
+{
+	border: 3px solid black;
+	
+}
+
+#re div.row
+{
+	border: 1px solid black;
+	padding: 10px;
+}
+
+#re div.row div
+{
+    
+    
+}
+
+#re img.re
+{
+	 
+	 max-height: 166;
+	 border: 2px solid black;
+}
+
+.click-left
+{
+	font: bold 16px serif;
+	color: black;
+	text-decoration: underline;
+}
+
+.click-right
+{
+	font: bold 20px Georgia, serif;
+    color: blue;
+    text-decoration: underline;
+}
+
+
+.redneck
+{
+	font: normal 20px Impact;
+	color: black;
+	
+}
+
+.assistance
+{
+	font: bold 22px Courier;
+	color: #CC0000;
+}
+
+.cheating, .eligible
+{
+	font: bold 18px Georgia;
+    color: black;
+}
+   
+.cheating
+{
+    text-decoration: underline;
+}
+
+

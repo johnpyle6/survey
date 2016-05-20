@@ -1,0 +1,268 @@
+#toolbox
+{
+	width: 265px;
+	margin: 10px auto;
+}
+
+.toolbox-item
+{
+    cursor: -webkit-grab; 
+    margin:1px; 
+}
+
+.toolbox-item span, .background-btn
+{
+    width: 15px;
+    height: 15px;
+}
+
+#toolbox-text span
+{
+    font-family: serif;
+    font-weight: bold;
+    
+}
+
+
+.background-btn
+{
+    background: transparent url(/images/bg-color.png) no-repeat 0 0;	
+}
+
+
+.thumbnail>img
+{
+	max-height: 100px;
+}
+
+.tab-content
+{
+	padding: 10px 0;
+}
+
+
+#page-background
+{
+	max-width: 980px;
+	margin: 0 auto;
+	background-color: #eee;
+	min-height: 400px;
+	padding: 50px 90px;
+	background-size: 110%;
+}
+
+#edit-survey
+{
+	margin: 0 auto;
+	padding: 10px;
+	
+    background-color: white;
+	min-height: 300px; 
+	max-width: 800px;
+}
+
+#edit-survey li, #edit-survey li ol li ul li
+{
+	list-style: none;
+}
+
+#edit-survey li ol li
+{
+    list-style: decimal;
+}
+
+#edit-survey li>*
+{
+	cursor: move;
+}
+
+#edit-survey img
+{
+    max-width: 630px;
+}
+
+.ed-cont
+{
+	display: none;
+}
+
+
+.editBtn
+{
+    float:right;
+}
+
+
+div#text-tools
+{
+	
+	margin-bottom: 10px;
+}
+
+
+
+/**
+ *  Footer styles
+ */
+footer
+{
+    font: normal 10.0pt Arial, sans-serif;
+    padding: 25px 0;
+    margin: 0 0 25px 0;
+    background-color: white;
+}
+
+footer ul
+{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+footer li
+{
+    list-style: none;
+}
+
+footer ul.wa-footer, footer ul.wa-footer li a
+{
+	color: #000000;
+}
+ul.lop-footer
+{
+    color: #808080;
+}
+
+footer ul.lop-footer li
+{
+    display: inline-block;
+}
+
+footer ul.lop-footer  li:after
+{
+    content: " | ";
+}
+
+footer ul.lop-footer  li.last:after
+{
+    content: none;
+}
+
+footer ul.lop-footer  a
+{
+    color: #808080;
+}
+
+
+
+
+
+
+
+
+
+#existing-container-div
+{
+    
+}
+ul.existing-container
+{
+    height: 200px;
+    overflow-y: scroll;
+    margin: 0;
+    padding: 0;
+}
+
+ul.existing-container li
+{
+    width: 375px;
+    white-space: normal;
+    margin: 3px 0;
+}
+
+
+
+
+#qa-container
+{
+	border: 1px solid #ddd;
+	min-height: 200px;
+}
+
+#qa-preview
+{
+	border: 1px solid #ddd;
+    min-height: 400px;	
+}
+
+#qa-preview li
+{
+    cursor: default;
+    
+    padding: 2px;
+    border-radius: 5px;
+    margin: 5px;  
+}
+
+#qa-preview li.selected
+{
+	background-color: #ddd;
+}
+
+li.preview-answer
+{
+	padding: 2px;
+}
+
+#survey-create label
+{
+	width: 150px;
+}
+
+#survey-create p
+{
+	margin-top: 20px;
+	border: 1px solid #eee;
+	padding: 10px;
+}
+
+#surveyPreviewContainer
+{
+	border: 1px solid #ddd;
+	min-height: 100px;
+	margin-top: 20px;
+}
+
+#survey-preview ul
+{
+	margin: 0;
+	padding: 0;
+}
+
+#questionsList ul li
+{
+	list-style: none;
+	
+
+}
+
+#debug
+{
+	
+	margin-top: 30px;
+}
+
+
+
+
+
+
+
+
+/*** THANK YOU EDITOR STYLES ***/
+.ad-preview
+{
+	border: 1px solid black;
+	padding: 5px;
+	margin: 5px;
+}
