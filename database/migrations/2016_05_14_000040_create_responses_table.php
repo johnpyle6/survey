@@ -15,13 +15,15 @@ class CreateResponsesTable extends Migration
         Schema::create('responses', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('survey_id');
-            $table->integer('question_id');
+            $table->integer('survey_question_id')->unsigned();
             $table->integer('answer_id');
             $table->string('ip');
             $table->string("tag");
             $table->string("name");
             $table->string("email");
             $table->timestamps();
+
+            
         });
     }
 

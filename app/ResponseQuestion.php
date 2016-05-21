@@ -4,19 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SurveyQuestion extends Model
+class ResponseQuestion extends Model
 {
-    protected $fillable = [];
-    public $timestamps = false;
 
 
     /**
-     * A SurveyQuestion is owned by one Survey
+     * A SurveyResultQuestion is owned by one SurveyResult
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function survey(){
-        return $this->belongsTo('App\Survey');
+    public function response(){
+        return $this->belongsTo('App\Response');
     }
 
     /**
@@ -28,13 +26,9 @@ class SurveyQuestion extends Model
         return $this->belongsTo('App\Question');
     }
 
-
+    /*
     public function answers(){
         return $this->hasMany('App\SurveyAnswer');
-    }
-
-    public function response(){
-        return $this->belongsToMany('App\Response');
-    }
-
+    }*/
+    //
 }

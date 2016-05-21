@@ -18,6 +18,7 @@ class CreateQuestionsTable extends Migration
             $table->timestamps();
 
             
+            
         });
     }
 

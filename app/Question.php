@@ -14,8 +14,8 @@ class Question extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    function question(){
-        return $this->hasMany('App\SurveyQuestion');
+    function survey_question(){
+        return $this->belongsToMany('App\SurveyQuestion');
     }
 
 }
