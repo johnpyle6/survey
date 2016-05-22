@@ -81,3 +81,4 @@ Route::post('survey/rest/saveFooter', 'SurveyController@saveFooter');
 Route::get('survey/test/{survey_id}', 'SurveyController@modelTest');
 Route::get('signup/test', 'SurveyController@formSubmitHandler');
 
+Route::get('signup/test/newtemplate', 'SurveyController@newTemplate');

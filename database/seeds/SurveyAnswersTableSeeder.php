@@ -13,43 +13,43 @@ class SurveyAnswersTableSeeder extends Seeder
     {
         DB::table('survey_answers')->insert([
             // Question 1
-            [   'survey_question_id' => 1, 'answer_id' => 1, 'answer_order' => 1, ],
-            [   'survey_question_id' => 1, 'answer_id' => 2, 'answer_order' => 2, ],
-            [   'survey_question_id' => 1, 'answer_id' => 3, 'answer_order' => 3, ],
-            [   'survey_question_id' => 1, 'answer_id' => 4, 'answer_order' => 4, ],
-            [   'survey_question_id' => 1, 'answer_id' => 5, 'answer_order' => 5, ],
+            [   'survey_question_id' => 1, 'answer_id' => 8, 'answer_order' => 1, ],
+            [   'survey_question_id' => 1, 'answer_id' => 9, 'answer_order' => 2, ],
+            [   'survey_question_id' => 1, 'answer_id' => 10, 'answer_order' => 3, ],
+            [   'survey_question_id' => 1, 'answer_id' => 11, 'answer_order' => 4, ],
+            [   'survey_question_id' => 1, 'answer_id' => 12, 'answer_order' => 5, ],
 
             // Question 2
-            [   'survey_question_id' => 2, 'answer_id' => 1, 'answer_order' => 1, ],
-            [   'survey_question_id' => 2, 'answer_id' => 2, 'answer_order' => 2, ],
-            [   'survey_question_id' => 2, 'answer_id' => 3, 'answer_order' => 3, ],
-            [   'survey_question_id' => 2, 'answer_id' => 4, 'answer_order' => 4, ],
-            [   'survey_question_id' => 2, 'answer_id' => 5, 'answer_order' => 5, ],
+            [   'survey_question_id' => 2, 'answer_id' => 8, 'answer_order' => 1, ],
+            [   'survey_question_id' => 2, 'answer_id' => 9, 'answer_order' => 2, ],
+            [   'survey_question_id' => 2, 'answer_id' => 10, 'answer_order' => 3, ],
+            [   'survey_question_id' => 2, 'answer_id' => 11, 'answer_order' => 4, ],
+            [   'survey_question_id' => 2, 'answer_id' => 12, 'answer_order' => 5, ],
 
             // Question 3
-            [   'survey_question_id' => 3, 'answer_id' => 1, 'answer_order' => 1, ],
-            [   'survey_question_id' => 3, 'answer_id' => 2, 'answer_order' => 2, ],
-            [   'survey_question_id' => 3, 'answer_id' => 3, 'answer_order' => 3, ],
-            [   'survey_question_id' => 3, 'answer_id' => 4, 'answer_order' => 4, ],
-            [   'survey_question_id' => 3, 'answer_id' => 5, 'answer_order' => 5, ],
+            [   'survey_question_id' => 3, 'answer_id' => 8, 'answer_order' => 1, ],
+            [   'survey_question_id' => 3, 'answer_id' => 9, 'answer_order' => 2, ],
+            [   'survey_question_id' => 3, 'answer_id' => 10, 'answer_order' => 3, ],
+            [   'survey_question_id' => 3, 'answer_id' => 11, 'answer_order' => 4, ],
+            [   'survey_question_id' => 3, 'answer_id' => 12, 'answer_order' => 5, ],
 
             // Question 4
-            [   'survey_question_id' => 4, 'answer_id' => 1, 'answer_order' => 1, ],
-            [   'survey_question_id' => 4, 'answer_id' => 2, 'answer_order' => 2, ],
-            [   'survey_question_id' => 4, 'answer_id' => 3, 'answer_order' => 3, ],
-            [   'survey_question_id' => 4, 'answer_id' => 4, 'answer_order' => 4, ],
-            [   'survey_question_id' => 4, 'answer_id' => 5, 'answer_order' => 5, ],
+            [   'survey_question_id' => 4, 'answer_id' => 8, 'answer_order' => 1, ],
+            [   'survey_question_id' => 4, 'answer_id' => 9, 'answer_order' => 2, ],
+            [   'survey_question_id' => 4, 'answer_id' => 10, 'answer_order' => 3, ],
+            [   'survey_question_id' => 4, 'answer_id' => 11, 'answer_order' => 4, ],
+            [   'survey_question_id' => 4, 'answer_id' => 12, 'answer_order' => 5, ],
 
             // Question 5
-            [   'survey_question_id' => 5, 'answer_id' => 1, 'answer_order' => 1, ],
-            [   'survey_question_id' => 5, 'answer_id' => 2, 'answer_order' => 2, ],
-            [   'survey_question_id' => 5, 'answer_id' => 3, 'answer_order' => 3, ],
-            [   'survey_question_id' => 5, 'answer_id' => 4, 'answer_order' => 4, ],
-            [   'survey_question_id' => 5, 'answer_id' => 5, 'answer_order' => 5, ],
+            [   'survey_question_id' => 5, 'answer_id' => 8, 'answer_order' => 1, ],
+            [   'survey_question_id' => 5, 'answer_id' => 9, 'answer_order' => 2, ],
+            [   'survey_question_id' => 5, 'answer_id' => 10, 'answer_order' => 3, ],
+            [   'survey_question_id' => 5, 'answer_id' => 11, 'answer_order' => 4, ],
+            [   'survey_question_id' => 5, 'answer_id' => 12, 'answer_order' => 5, ],
 
             // Question 6
-            [   'survey_question_id' => 6, 'answer_id' => 6, 'answer_order' => 1, ],
-            [   'survey_question_id' => 6, 'answer_id' => 7, 'answer_order' => 2, ],
+            [   'survey_question_id' => 6, 'answer_id' => 1, 'answer_order' => 1, ],
+            [   'survey_question_id' => 6, 'answer_id' => 2, 'answer_order' => 2, ],
 
 
 

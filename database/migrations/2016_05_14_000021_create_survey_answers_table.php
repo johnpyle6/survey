@@ -24,9 +24,10 @@ class CreateSurveyAnswersTable extends Migration
                 ->references('id')
                 ->on('answers');
 
-            $table->foreign('survey_question_id')
+            /*$table->foreign('survey_question_id')
                 ->references('id')
                 ->on('survey_questions');
+            */
         });
     }
 

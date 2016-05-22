@@ -8,6 +8,10 @@ class Survey extends Model
 {
 	protected $fillable = ['name', 'footer', 'date', 'bg_image_id', 'lists'];
 	public $timestamps = true;
+	private $survey_id;
+	public $questions;
+
+	
 
 
 	/**
@@ -15,7 +19,7 @@ class Survey extends Model
 	 * 
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function survey_question(){
+	public function surveyQuestions(){
 	    return $this->hasMany('App\SurveyQuestion');
 	}
 /*

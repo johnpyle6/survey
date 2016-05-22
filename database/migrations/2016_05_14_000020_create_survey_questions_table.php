@@ -13,11 +13,12 @@ class CreateSurveyQuestionsTable extends Migration
     public function up()
     {
         Schema::create('survey_questions', function (Blueprint $table) {
-    		$table->increments('id');
+    		$table->integer('id');
     		$table->integer('survey_id')->unsigned();
     		$table->integer('question_id')->unsigned();
     		$table->integer('question_order');
     		$table->timestamps();
+
 
             $table->foreign('survey_id')
                 ->references('id')
@@ -27,10 +28,9 @@ class CreateSurveyQuestionsTable extends Migration
             $table->foreign('question_id')
                 ->references('id')
                 ->on('questions');
+            
 
-            $table->foreign('question_id')
-                ->references('question_id')
-                ->on('responses');
+
 
         });
     }

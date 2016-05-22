@@ -14,7 +14,7 @@ class Answer extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    function answer(){
+    function surveyAnswer(){
         return $this->hasMany('App\SurveyAnswer');
     }
 }

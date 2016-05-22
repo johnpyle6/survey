@@ -18,6 +18,6 @@ class SurveyAnswer extends Model
     }
 
     public function survey_question(){
-        return $this->belongsTo('App\SurveyQuestion');
+        return $this->belongsToMany('App\SurveyQuestion');
     }
 }

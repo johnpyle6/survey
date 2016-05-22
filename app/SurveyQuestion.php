@@ -3,11 +3,17 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use DB;
+/**
+ * Class SurveyQuestion
+ * @package App
+ */
 class SurveyQuestion extends Model
 {
     protected $fillable = [];
     public $timestamps = false;
+
+
 
 
     /**
@@ -20,21 +26,30 @@ class SurveyQuestion extends Model
     }
 
     /**
-     * A SurveyQuestion has one question
+     * We only need the text from the question not the whole object so we just pull that
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return String question text
      */
-    public function question(){
-        return $this->belongsTo('App\Question');
+    public function getText(){
+        //var_dump($this);
+        //echo "\n\n";
+        return DB::table('questions')
+            ->where('id', $this->question_id)
+            ->select('text')
+            ->first()
+            ->text;
     }
 
 
-    public function answers(){
+    /**
+     * A SurveyQuestion has many SurveyAnswer(s)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function surveyAnswers(){
         return $this->hasMany('App\SurveyAnswer');
     }
 
-    public function response(){
-        return $this->belongsToMany('App\Response');
-    }
+
 
 }

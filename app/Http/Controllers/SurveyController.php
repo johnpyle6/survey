@@ -16,6 +16,12 @@ class SurveyController extends Controller
     
     
     /** Route Controllers **/
+    function index(){}
+
+    function newTemplate(){
+        $survey = Survey::where('id', 1)->first();
+        return view('survey.layouts.surveyApp', ['survey' => $survey, ]);
+    }
 
     function view($survey_id, $tag = 'none'){
         $survey = $this->buildSurvey($survey_id, $tag);
@@ -339,36 +345,7 @@ class SurveyController extends Controller
  * CRUD - build
  *************************************************/
 
-    function get_survey_questions($survey_id){
-        $questions = DB::select("
-            SELECT a.text, b.question_order, b.question_id
-            FROM questions a, survey_questions b
-            WHERE b.survey_id = $survey_id
-                AND a.id = b.question_id
-            GROUP BY b.question_id
-            ORDER BY b.question_order"
-        );
-
-        foreach ($questions as $question){
-            $question->answers = $this->get_answers($survey_id, $question->qid);
-        }
-
-        return $questions;
-    }
-
-    function get_answers($survey_id, $question_id){
-        $answers = DB::select(
-            "SELECT a.id, a.text, b.answer_order, b.answer_id 
-                FROM answers a, survey_questions b
-                WHERE b.survey_id = $survey_id
-                    AND b.question_id = $question_id
-                    AND a.id = b.answer_id
-                ORDER BY b.answer_order"
-        );
-
-        return $answers;
-    }
-
+    
     function get_properties($survey_id){
         // TODO: Use first()?
         $properties = DB::select("
@@ -510,30 +487,7 @@ class SurveyController extends Controller
     
     
 
-    function get_votes($survey_id, $question_id, $answer_id){
-        return DB::select("
-            SELECT 
-                COUNT(answer_id) votes    
-            FROM 
-                survey_responses
-            WHERE 
-                survey_id = $survey_id AND
-                question_id = $question_id AND
-                answer_id = $answer_id
-        ")[0]->votes; 
-    }
-    
-    function get_total_votes($survey_id, $question_id){
-        return DB::select("
-            SELECT 
-                COUNT(answer_id) votes    
-            FROM 
-                survey_responses
-            WHERE 
-                survey_id = $survey_id AND
-                question_id = $question_id
-        ")[0]->votes;
-    }
+
     
     function getResults($survey_id){
         // get questions

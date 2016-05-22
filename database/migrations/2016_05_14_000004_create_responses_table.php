@@ -24,6 +24,7 @@ class CreateResponsesTable extends Migration
             $table->timestamps();
 
             
+            
         });
     }
 
