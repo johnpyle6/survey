@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/survey-blade.css">
 
 </head>
-<body class="container-fluid" style="background-image: url(/images/{{-- $survey->layout->bg_image_name --}})">
+<body class="container-fluid" style="background-image: url(/images/{{ $survey->bgImageName() }})">
     <div id="main" class="center-block">
 
         @if ( count($errors) > 0 )
@@ -35,9 +35,12 @@
         @endif
 
         <hr>
+
+        {{--
         <pre>
-        {{-- print_r($survey->surveyQuestions[0]->getText()) --}}
+        print_r($survey->surveyQuestions[0]->getText())
         </pre>
+        --}}
 
 
 

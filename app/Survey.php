@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Survey extends Model
 {
@@ -11,7 +12,7 @@ class Survey extends Model
 	private $survey_id;
 	public $questions;
 
-	
+
 
 
 	/**
@@ -21,6 +22,14 @@ class Survey extends Model
 	 */
 	public function surveyQuestions(){
 	    return $this->hasMany('App\SurveyQuestion');
+	}
+
+	public function bgImageName(){
+		return DB::table('images')
+			->where('id', $this->bg_image_id)
+			->select('filename')
+			->first()
+			->filename;
 	}
 /*
 	public function layout(){
