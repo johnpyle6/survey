@@ -20,20 +20,20 @@
     
     <!-- Tab panes -->
     <div class="tab-content">
-       @include('survey.editor.surveytab')
-       @include('survey.editor.qatab')     
-       @include('survey.editor.thankyoutab')
-       @include('survey.editor.resultstab')
+        @include('survey.tabs.surveytab')
+        @include('survey.tabs.qatab')
+		@include('survey.tabs.thankyoutab')
+        @include('survey.tabs.resultstab')
 	</div>
 </section>
 
-@include('survey.modals.adsModal')
+
 @include('survey.modals.imageModal')
-@include('survey.modals.footerModal')
+
 @include('survey.modals.newQuestion')
 @include('survey.modals.newAnswer')
 @include('survey.modals.bgModal')
-@include('survey.modals.listModal')
+{{--@include('survey.modals.listModal') --}}
 
 
 

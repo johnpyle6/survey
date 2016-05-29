@@ -1,47 +1,43 @@
 <!-- Survey Preview Tab -->
 <div role="tabpanel" class="tab-pane active" id="survey-preview-tab">
 	<div class="row">
-    	<div class="col-md-8 col-md-offset-2 col-sm-6 col-sm-offset-3">
-        	<p class="input-group">
+    	<div class="form-inline center-block" style="width: 330px;">
+        	<p class="input-group form-group ">
         		<span class="input-group-addon" id="basic-addon">Survey Name</span>
         		<input type="text" class="form-control" name="survey-name" id="survey-name" aria-describedby="basic-addon">
         	</p>
-        </div>  
-        <div class="btn btn-default" onclick="tools.saveName()">
-    		<span class="glyphicon glyphicon-floppy-disk"></span>
-    	</div>  
+
+			<div class="btn btn-default" onclick="tools.saveName()">
+				<span class="glyphicon glyphicon-floppy-disk"></span>
+			</div>
+		</div>
     </div>
     <div id="toolbox" class="center-block">
-    	<div id="toolbox-text" class="toolbox-item btn btn-default" >
-    		<span class="glyphicon">T</span>
+    	<div id="toolbox-text" class="toolbox-item btn btn-default" data-toggle="tooltip" data-placement="left" title="Text">
+    		<span class="glyphicon" >T</span>
     	</div>
-    	<div id="toolbox-image" class="toolbox-item btn btn-default" >
+    	<div id="toolbox-image" class="toolbox-item btn btn-default" data-toggle="tooltip" data-placement="left" title="Image">
     		<span class="glyphicon glyphicon-picture"></span>
     	</div>
-    	<div id="toolbox-date" class="toolbox-item btn btn-default" >
+    	<div id="toolbox-date" class="toolbox-item btn btn-default"  data-toggle="tooltip" data-placement="left" title="Date" >
     		<span class="glyphicon glyphicon-calendar"></span>
     	</div>
-    	<div id="toolbox-bg" class="btn btn-default" >
+    	<div id="toolbox-bg" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Set Background Color">
     		<span class="glyphicon background-btn" onclick="$('#bgModal').modal('toggle')"></span>
     	</div>
-    	<div id="toolbox-bg" class="btn btn-default" >
+    	<div id="toolbox-bg" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Upload Image">
     		<span class="glyphicon glyphicon-upload" onclick="$('#imageModal').modal('toggle')"></span>
     	</div>
-    	<div id="toolbox-bg" class="btn btn-default" >
-    		<span class="glyphicon glyphicon-list" onclick="$('#listModal').modal('toggle')"></span>
-    	</div>
-    </div>
-    <div id="text-tools">	
-    	<button id="footer-btn" class="btn btn-default" onclick="$('#footerModal').modal('toggle')">
-    		Footer
-    	</button>
     </div>
 
-	<div id="page-background" class="col-med-8" style="background-image: url(/images/{{ $layout->bgimage }})">
+
+	<div id="page-background" class="col-med-8" style="background-image: url(/images/{{-- $layout->bgimage --}})">
     	<ul id="edit-survey" class="col-med-6">
+    		{{--
     		@if ($layout->date)
         	<li><p style="text-align:center"><strong>{{ date('M d, Y') }}</strong></p></li>
     		@endif
+
     	
     		@for ($i = 0; $i < count($components); $i++)
             	    <li id="comp-{{ $i + 1 }}" componentid="new">
@@ -82,13 +78,7 @@
     			@endforeach
     			</ol>
     		</li>
+    		--}}
     	</ul>
 	</div>
-    <footer id="content-footer">
-        @if ( $layout->footer == "wa")
-            @include('survey.layouts.footer_wa')    
-        @elseif ($layout->footer == "lop")
-            @include('survey.layouts.footer_lop')
-        @endif
-    </footer>
 </div>

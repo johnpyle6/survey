@@ -2,7 +2,7 @@
 	<div class="">
 		<div class="col-md-6 col-sm-6" >
 			<ol id="qa-preview">
-			@foreach ( $survey->questions as $question )
+			{{--@foreach ( $survey->questions as $question )
 				<li qid="{{ $question->qid }}" onclick="$('#qa-preview li').removeClass('selected');$(this).addClass('selected')">
 					<button type="button" class="close" aria-label="Close">
     					<span aria-hidden="true" onclick="tools.deleteSurveyQuestion(this)">&times;</span> 
@@ -20,6 +20,7 @@
 	                </ul>
     			</li>
 			@endforeach
+			--}}
 			</ol>
 		</div>
 		<div class="col-md-6 col-sm-6">
@@ -35,22 +36,25 @@
 
 			<h3>Avaliable Questions</h3>                
         	<ul class="existing-container" id="existing-questions">
-        		@foreach ($questions as $question)
+        		{{--@foreach ($questions as $question)
         		<li qid="{!! $question->id !!}" class="btn btn-default">
         			{!! $question->question !!}
         		</li>
         		<br>
         		@endforeach
+        		--}}
 			</ul>
         
         	<h3>Available Answers</h3>
         	<ul class="existing-container" id="existing-answers">
+				{{--
         		@foreach ($answers as $answer)
         		<li aid="{!! $answer->id !!}" class="btn btn-default">
         			{!! $answer->text !!}
         		</li>
         		<br>
         		@endforeach
+        		--}}
 			</ul>
         </div>
     </div>

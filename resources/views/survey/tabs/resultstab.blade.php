@@ -20,13 +20,12 @@
 	</div>
 </div>
 <div id="text-tools">	
-	<button id="footer-btn" class="btn btn-default" onclick="$('#footerModal').modal('toggle')">
-		Footer
-	</button>
+
 </div>
 
-<div id="page-background" class="col-med-8" style="background-image: url(/images/{{ $layout->bgimage }})">
+<div id="page-background" class="col-med-8" style="background-image: url(/images/{{-- $layout->bgimage --}})">
 	<ul id="edit-survey" class="col-med-6">
+		{{--
 		@if ($layout->date)
     	<li><p style="text-align:center"><strong>{{ date('M d, Y') }}</strong></p></li>
 		@endif
@@ -70,15 +69,9 @@
     			@endforeach
     			</ol>
     		</li>
+    		--}}
     	</ul>
-    	<footer id="content-footer">
-            @if ( $layout->footer == "wa")
-                @include('survey.layouts.footer_wa')    
-            @elseif ($layout->footer == "lop")
-                @include('survey.layouts.footer_lop')
-            @endif
-        </footer>
-    	
+
     	
     </div>
 </div>

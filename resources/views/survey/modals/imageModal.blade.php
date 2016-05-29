@@ -27,7 +27,7 @@
     			{!! Form::open(['files' => true, 'url' => 'survey/rest/saveImage', 'class' => '', 'id' => 'image-form']) !!}
     			{!! Form::label('image', 'Add New Image') !!}
     			{!! Form::file('image') !!}
-    			{!! Form::hidden('survey_id', $survey->id) !!}
+    			{{-- {!! Form::hidden('survey_id', $survey->id) !!} --}}
     			{!! Form::close() !!}
     			
     		</div>	        	
@@ -57,7 +57,7 @@
     			{!! Form::open(['files' => true, 'url' => 'survey/rest/saveImage', 'class' => '', 'id' => 'image-form']) !!}
     			{!! Form::label('image', 'Add New Image') !!}
     			{!! Form::file('image') !!}
-    			{!! Form::hidden('survey_id', $survey->id) !!}
+                {{-- {!! Form::hidden('survey_id', $survey->id) !!} --}}
     			{!! Form::close() !!}
     		</div>	        	
         </div>

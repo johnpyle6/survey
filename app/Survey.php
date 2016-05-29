@@ -24,12 +24,27 @@ class Survey extends Model
 	    return $this->hasMany('App\SurveyQuestion');
 	}
 
+
+	/**
+	 * Get the filename of the background image
+	 *
+	 * @return mixed
+	 */
 	public function bgImageName(){
 		return DB::table('images')
 			->where('id', $this->bg_image_id)
 			->select('filename')
 			->first()
 			->filename;
+	}
+
+	/**
+	 * A survey can have many contents
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function content(){
+		return $this->belongsToMany('App\Content');
 	}
 /*
 	public function layout(){

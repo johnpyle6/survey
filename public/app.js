@@ -1,28 +1,4 @@
 
-function dropText(){
-    var id = $('#edit-survey').children("li").length +1;
-    
-    $('#edit-survey').append(
-        '<li id="comp-' + id + '" componentid="new">' +
-            '<div class="ed-comp" id="ed-comp-' + id + '">' +
-                '<textarea class="" id="ed-' + id + '"></textarea><br>' +
-                '<button class="btn btn-primary" onclick="tools.save(' + id + ')">save</button> ' +
-                '<button class="btn" onclick="toggleEditor(' + id + ')">cancel</button> ' +
-            '</div>' +
-            '<div class="ed-cont" id="ed-cont-' + id + '">' +
-                '<div class="btn btn-default editBtn" onclick="removeEd(\'comp-' + id + '\')">' +
-                    '<span class="glyphicon glyphicon-trash"></span>' +
-                '</div>&nbsp;' +
-                '<div class="btn btn-default editBtn" onclick="toggleEditor(' + id + ')">' +
-                    '<span class="glyphicon glyphicon-pencil"></span>' +
-                '</div>' +
-                
-                '<div id="container-' + id + '"  ></div>' +   
-            '</div>' +
-        '</li>');
-    CKEDITOR.replace('ed-' + id);
-}
-
 function saveReorder(){
     $('#edit-survey').children("li").each(function(i,e){
        console.debug( $(e).attr("componentid") );
@@ -35,20 +11,14 @@ function toggleEditor(id){
     $('#ed-cont-' + id).toggle();
 }
 
-
-
-function removeEd(cid){
-    $('#' + cid).remove();
-}
-
 function makeToolboxItem(type){
-    var item = '<div id="' + type + '" class="toolbox-item btn btn-default" >';
+    var item = '<div id="' + type + '" class="toolbox-item btn btn-default" data-toggle="tooltip" data-placement="left" ';
     if (type == 'toolbox-text'){
-        item += '<span class="glyphoicon">T';
+        item += 'title="Text"><span class="glyphoicon">T';
     }else if(type == 'toolbox-image'){
-        item += '<span class="glyphicon glyphicon-picture">';
+        item += ' title="Image"><span class="glyphicon glyphicon-picture">';
     }else if (type == 'toolbox-date'){
-        item += '<span class="glyphicon glyphicon-calendar">';
+        item += 'title="Date"><span class="glyphicon glyphicon-calendar">';
     }
     item += '</span></div>';
     
@@ -62,9 +32,10 @@ function imgSelect(ele){
 
 function insertImg(){
     if ( $('#image-form').children("input#image").val() == ''){
-        var id = $('#edit-survey').children().length;
+        var editSurvey = $('#edit-survey');
+        var id = editSurvey.children().length;
         
-        $('#edit-survey').append(
+        editSurvey.append(
             '<li id="comp-' + id + '">' +
                 '<p>' +
                     '<img class="center-block img-responsive header-img" src="/images/trump.jpg" alt="">' +
@@ -113,30 +84,97 @@ function saveBackground(ele){
 
 
 var tools = {
-    save : function (id){
+    dropHandler : function(event, ui ) {
+        var id = ui.draggable.attr('id');
+        if (id == 'toolbox-text'){
+            tools.createContent( tools.insertTextContentEditor );
+
+        }else if (id == 'toolbox-image'){
+            $('#bgImageModal').modal('toggle');
+
+        }else if (id == 'toolbox-date'){
+            tools.insertDate();
+        }
+
+        var next = $('#' + id).next();
+        ui.draggable.remove();
+        next.before( makeToolboxItem(id) );
+        $('.toolbox-item').draggable();
+        $('[data-toggle="tooltip"]').tooltip();
+
+    },
+
+
+
+    insertTextContentEditor : function(id){
+        var editSurvey = $('#edit-survey');
+        //var id = editSurvey.children("li").length +1;
+
+        /** TODO: remove id and just use content id for all id's **/
+        editSurvey.append(
+            '<li id="comp-' + id + '">' +
+                '<div class="ed-comp" id="ed-comp-' + id + '">' +
+                    '<textarea class="" id="ed-' + id + '"></textarea><br>' +
+                    '<button class="btn btn-primary" onclick="tools.saveContent(' + id + ')">save</button>' +
+                    '<button class="btn" onclick="toggleEditor(' + id + ')">cancel</button> ' +
+                '</div>' +
+                '<div class="ed-cont" id="ed-cont-' + id + '">' +
+                    '<div class="btn btn-default editBtn" onclick="tools.deleteContent(' + id + ')">' +
+                        '<span class="glyphicon glyphicon-trash"></span>' +
+                    '</div>&nbsp;' +
+                    '<div class="btn btn-default editBtn" onclick="toggleEditor(' + id + ')">' +
+                        '<span class="glyphicon glyphicon-pencil"></span>' +
+                    '</div>' +
+                    '<div id="container-' + id + '"  ></div>' +
+            '   </div>' +
+            '</li>');
+
+
+        return CKEDITOR.replace('ed-' + id);
+    },
+
+
+
+
+    createContent : function(success){
+        $.get('/content/create', success);
+    },
+
+    saveContent : function(id){
         var code = CKEDITOR.instances['ed-' + id].document.getBody().getHtml();
         var componentid = $('li#comp-' + id).attr('componentid');
-        if (componentid == 'new'){
-            var url = '/survey/rest/saveComponent' 
-        }else {
-            var url = '/survey/rest/editComponent'
-        }
-        
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: { 
-                'html' : code, 
+
+        $.post(
+            "/content",
+            {   'content' : code,
                 'id' : componentid,
                 'survey_id' : window.location.pathname.split('/').pop(),
                 'order' : $('#edit-survey').children("li").length
+            }
+        ).done(function(data){
+            //console.debug(data);
+            toggleEditor(id);
+            $('#container-' + id).html(code);
+
+        }).fail(function(data){
+            /** TODO: NON_USER RUNTIME ERRORS **/
+            console.debug(data);
+        });
+    },
+
+
+    deleteContent: function(id){
+
+        $.ajax({
+            type: "POST",
+            url: '/content/' + id,
+            data: {
+                survey_id: 10,
+                _method: "DELETE"
             },
             success: function(data){
-                console.debug(data.id);
-                $('li#comp-' + id).attr('componentid', data.id);
-                
-                $('#container-' + id).html(code);
-                toggleEditor( $('#edit-survey').children("li").length );
+                console.debug(data);
+                $('#comp-' + id).remove();
             },
             error: function(req, stat, err){
                 console.debug(req);
@@ -144,31 +182,44 @@ var tools = {
                 console.debug(err);
             },
             dataType: 'json'
-          });
-        
-        
-        
-    },
-    saveDate : function(){
-        $.ajax({
-            type: "POST",
-            url: '/survey/rest/saveComponent',
-            data: { 
-                'id' : 1,
-                'survey_id' : window.location.pathname.split('/').pop(),
-                'order' : $('#edit-survey').children().length
-            },
-            success: function(data){
-                window.location.reload();
-            },
-            error: function(req, stat, err){
-                console.debug(stat);
-                console.debug(err);
-            },
-            dataType: 'json'
         });
     },
-    
+
+
+
+
+
+
+
+
+
+
+
+
+    insertDate : function(){
+        this.createContent( function(contentId){
+            /* There really has to be a better way */
+            ed = tools.insertTextContentEditor(contentId);
+            setTimeout(function() {
+                ed.document
+                    .getBody()
+                    .setHtml('<p><span id="date">' + new Date().toDateString() + '</span></p>');
+            }, 100);
+        });
+    },
+
+    insertImage : function(){
+        this.createContent( function(contentId){
+
+        });
+    },
+
+
+
+
+
+
+
     saveBgImage: function(){
         var id = $('a.imgSelected').children('img').attr('imgid');
 
@@ -192,26 +243,7 @@ var tools = {
 
     },
 
-    remove: function(id){
 
-        $.ajax({
-            type: "POST",
-            url: '/survey/rest/remove',
-            data: { 
-                'id' : id,
-                'survey_id' : window.location.pathname.split('/').pop(),
-                
-            },
-            success: function(data){
-                window.location.reload();
-            },
-            error: function(req, stat, err){
-                console.debug(stat);
-                console.debug(err);
-            },
-            dataType: 'json'
-        });
-    },
     
     addFooter: function(){
         org = $('input[name="footer"]:checked').val();
@@ -244,7 +276,7 @@ var tools = {
         $.post(
             "/survey/rest/saveQuestion",
             { text: code }
-        ).done(function(data){
+        ).done( function(data){
             console.debug(data);
             
             $('ul#existing-questions').prepend(
@@ -282,7 +314,7 @@ var tools = {
                 'qorder': qorder, 
                 'aid': aid, 
                 'aorder': aorder, 
-                'survey_id' : window.location.pathname.split('/').pop(), 
+                'survey_id' : window.location.pathname.split('/').pop()
             };
         
         console.debug(data);
@@ -293,8 +325,10 @@ var tools = {
         ).done(function(data){
             console.debug('no-problem');
             console.debug(data);
-            $('#qa-container').html( $('#qa-preview').html() );    
-            $('#qa-container button').remove()
+
+            var container = $('#qa-container');
+            container.html( $('#qa-preview').html() );
+            container.children(' button').remove();
         }).fail(function(data){
             console.debug('problem');
             console.debug(data);
@@ -317,9 +351,10 @@ var tools = {
                     var aorder = ii + 1;
                     tools.addSurveyQA(qid, qorder, aid, aorder);
                     console.debug(qid + " " + qorder + " " + aid + " " + aorder);
-                    
-                    $('#qa-container').html( $('#qa-preview').html() );
-                    $('#qa-container button').remove()
+
+                    var container = $('#qa-container');
+                    container.html( $('#qa-preview').html() );
+                    container.children('button').remove();
                 });
             });
         }).fail(function(data){
@@ -332,7 +367,6 @@ var tools = {
     },
     
     deleteSurveyAnswer : function(ele){
-        e = ele;
         var aid = $(ele).parent().parent().attr('aid');
         var qid = $(ele).parent().parent().parent().parent().attr('qid');
         
@@ -353,10 +387,9 @@ var tools = {
     },
     
     deleteSurveyQuestion : function(ele){
-        e = ele;
         var qid = $(ele).parent().parent().attr('qid');
-        
         console.debug(qid);
+
         $.post(
                 "/survey/rest/deleteSurveyAnswer",
                 { 'survey_id' : window.location.pathname.split('/').pop(),
@@ -371,9 +404,10 @@ var tools = {
         $(ele).parent().parent().remove();
     },
     
+    /*
     saveLists : function(){
         var lists = [];
-        $('#list-chooser label.btn.active').children().each(function(i,e){
+        $('#list-chooser').children('label.btn.active').children().each(function(i,e){
             lists.push($(e).val());
         });
         
@@ -389,9 +423,9 @@ var tools = {
             console.debug(data);
         });
     },
-    
+    */
     saveName : function(){
-        var name = $('#survey-name').val()
+        var name = $('#survey-name').val();
         $.post(
             "/survey/rest/saveName",
             { 'survey_id' : window.location.pathname.split('/').pop(),
@@ -403,7 +437,8 @@ var tools = {
             console.debug(data);
         });
     },
-    
+
+    /*
     insertAd : function(){
         $('#').append('<li><div>' + $('.ad-preview.selected').html() + '</div></li>');
         
@@ -417,103 +452,107 @@ var tools = {
         }).fail(function(data){
             console.debug(data);
         });
+    },
+    */
+
+
+
+    asynchTest : function(success){
+        success({contentId : 1});
+    },
+
+
+
+
+
+
+    previewDropHandler : function(event, ui) {
+        var ele = ui.draggable;
+
+        if (ele.parent().attr('id') == 'existing-questions') {
+            /*            var questionId = ele.attr('qid');
+
+             $('#qa-preview li').removeClass('selected');
+
+             $('li.preview-answer').removeClass('btn-info');
+
+             $('#qa-preview').append("" +
+             '<li qid="' + questionId + '" onclick="$(\'#qa-preview li\').removeClass(\'selected\');$(this).addClass(\'selected\')" class="selected">' +
+             '<button type="button" class="close" aria-label="Close">' +
+             '<span aria-hidden="true" onclick="tools.deleteSurveyQuestion(this)">&times;</span>' +
+             '</button>' +
+             ui.draggable.html() +
+             '<ul id="q-' + ($('qa-preview').children("li").length + 1) + '">' +
+             '</li>');
+             $( "#qa-preview li" ).disableSelection();
+             $('#qa-preview').sortable({
+             update: function (event, ui){
+             tools.saveAllQuestions();
+             }
+             });
+             ui.draggable.remove();
+             */
+        } else if (ui.draggable.parent().attr('id') == 'existing-answers') {
+            /*
+             if ( $('#qa-preview li.selected').length > 0 ){
+             var questionId = $('#qa-preview li.selected').attr('qid');
+             var answerId = ui.draggable.attr('aid');
+             $('li.preview-answer').removeClass('btn-info');
+
+             $('#qa-preview li.selected ul').append(
+             '<li class="preview-answer" onclick="$(\'#qa-preview li\').removeClass(\'btn-info\');$(this).addClass(\'btn-info\')" aid="' + answerId + '">' +
+             '<button type="button" class="close" aria-label="Close">' +
+             '<span aria-hidden="true" onclick="tools.deleteSurveyAnswer(this)">&times;</span>' +
+             '</button>' +
+             ui.draggable.html() +
+             '</li>');
+
+             var qorder = 0;
+             $('#qa-preview').children("li").each(function(i,e){
+             if ($(e).hasClass('selected')){
+             qorder = i + 1;
+             }
+             });
+
+             var aorder = $('#qa-preview li.selected ul').children("li").length;
+             tools.addSurveyQA(questionId, qorder, answerId, aorder);
+
+             }*/
+
+        }
     }
-    
-        
+
 };
 
 
 
 $(document).ready( function(){
-    $('.toolbox-item').draggable();
-    $('.existing-container li').draggable( { helper: 'clone' });
-    $('#qa-preview').sortable({
-        update: function (event, ui){
-            tools.saveAllQuestions();
-        }            
+
+    $('#date').html( new Date().toDateString() );
+
+    $('.toolbox-item').draggable({
+        start: function() {
+            $('.toolbox-item').tooltip('hide');
+        }
     });
-    $('#qa-preview').children().first().addClass('selected');
-    
+    $('.existing-container li').draggable( { helper: 'clone' } );
+
+    var preview = $('#qa-preview');
+    preview.sortable({ update: tools.saveAllQuestions });
+    preview.children().first().addClass('selected');
+    preview.droppable({
+        accept: ".existing-container li",
+        activeClass: "ui-state-hover",
+        hoverClass: "ui-state-active",
+        drop: tools.previewDropHandler
+      });
+
     $( "#edit-survey" ).droppable({
         accept: ".toolbox-item",
         activeClass: "ui-state-hover",
         hoverClass: "ui-state-active",
-        drop: function( event, ui ) {
-            var id = ui.draggable.attr('id');
-            if (id == 'toolbox-text'){
-                dropText();    
-            }else if (id == 'toolbox-image'){
-                $('#bgImageModal').modal('toggle');    
-            }else if (id == 'toolbox-date'){
-                tools.saveDate(0);
-                
-            }
-              
-            var next = $('#' + id).next();
-            ui.draggable.remove();
-            next.before( makeToolboxItem(id) );
-            $('.toolbox-item').draggable();
-                     
-        }
-      });
-    
-    $( "#qa-preview" ).droppable({
-        accept: ".existing-container li",
-        activeClass: "ui-state-hover",
-        hoverClass: "ui-state-active",
-        drop: function( event, ui ) {
-            if (ui.draggable.parent().attr('id') == 'existing-questions'){
-                var questionId = ui.draggable.attr('qid');
-                $('#qa-preview li').removeClass('selected');
-                $('li.preview-answer').removeClass('btn-info');
-                
-                $('#qa-preview').append("" +
-                    '<li qid="' + questionId + '" onclick="$(\'#qa-preview li\').removeClass(\'selected\');$(this).addClass(\'selected\')" class="selected">' +
-                        '<button type="button" class="close" aria-label="Close">' +
-                            '<span aria-hidden="true" onclick="tools.deleteSurveyQuestion(this)">&times;</span>' + 
-                        '</button>' +
-                        ui.draggable.html() +
-                        '<ul id="q-' + ($('qa-preview').children("li").length + 1) + '">' +
-                    '</li>');
-                $( "#qa-preview li" ).disableSelection();
-                $('#qa-preview').sortable({
-                    update: function (event, ui){
-                        tools.saveAllQuestions();
-                    }            
-                });
-                ui.draggable.remove();
-            }else if (ui.draggable.parent().attr('id') == 'existing-answers'){
-                if ( $('#qa-preview li.selected').length > 0 ){
-                    var questionId = $('#qa-preview li.selected').attr('qid');
-                    var answerId = ui.draggable.attr('aid');
-                    $('li.preview-answer').removeClass('btn-info');
-                    
-                    $('#qa-preview li.selected ul').append(
-                            '<li class="preview-answer" onclick="$(\'#qa-preview li\').removeClass(\'btn-info\');$(this).addClass(\'btn-info\')" aid="' + answerId + '">' +
-                                '<button type="button" class="close" aria-label="Close">' +
-                                    '<span aria-hidden="true" onclick="tools.deleteSurveyAnswer(this)">&times;</span>' + 
-                                '</button>' +
-                                ui.draggable.html() + 
-                            '</li>');
-                    
-                    var qorder = 0;
-                    $('#qa-preview').children("li").each(function(i,e){
-                        if ($(e).hasClass('selected')){
-                            qorder = i + 1;
-                        }    
-                    });
-                    
-                    var aorder = $('#qa-preview li.selected ul').children("li").length;
-                    tools.addSurveyQA(questionId, qorder, answerId, aorder);
-                }
-                
-            }
-            
-            
-        }
-      });
-    
-    
+        drop: tools.dropHandler
+    });
     
     $( "#edit-survey" ).sortable({
         update: function (event, ui){
@@ -524,6 +563,25 @@ $(document).ready( function(){
     $( "#edit-survey" ).disableSelection();
     $( "#edit-survey li>*" ).disableSelection();
     $( "#qa-preview li>*" ).disableSelection();
+
+
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    /*
+    $( document ).tooltip({
+        position: {
+            my: "center bottom-20",
+            at: "center top",
+            using: function (position, feedback) {
+                $(this).css(position);
+                $("<div>")
+
+                    .appendTo(this);
+            }
+        }
+    });
+    */
 })
 
 

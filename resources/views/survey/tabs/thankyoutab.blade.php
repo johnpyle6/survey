@@ -1,30 +1,29 @@
-<div role="tabpanel" class="tab-pane active" id="thank-you-tab">
+<div role="tabpanel" class="tab-pane" id="thank-you-tab">
     <div id="toolbox" class="center-block">
-    	<div id="toolbox-text" class="toolbox-item btn btn-default" >
+    	<div id="toolbox-text" class="toolbox-item btn btn-default" title="Text>
     		<span class="glyphicon">T</span>
     	</div>
-    	<div id="toolbox-image" class="toolbox-item btn btn-default" >
+    	<div id="toolbox-image" class="toolbox-item btn btn-default" title="Image">
     		<span class="glyphicon glyphicon-picture"></span>
     	</div>
-    	<div id="toolbox-date" class="toolbox-item btn btn-default" >
+    	<div id="toolbox-date" class="toolbox-item btn btn-default" title="Date">
     		<span class="glyphicon glyphicon-calendar"></span>
     	</div>
-    	<div id="toolbox-bg" class="btn btn-default" >
+    	<div id="toolbox-bg" class="btn btn-default" title="Set Background">
     		<span class="glyphicon background-btn" onclick="$('#bgModal').modal('toggle')"></span>
     	</div>
-    	<div id="toolbox-bg" class="btn btn-default" >
+    	<div id="toolbox-bg" class="btn btn-default" title="Upload Image">
     		<span class="glyphicon glyphicon-upload" onclick="$('#imageModal').modal('toggle')"></span>
     	</div>
-        <div id="">	
-        	<button id="footer-btn" class="btn btn-default" onclick="$('#adsModal').modal('toggle')">
-        		Ads
-        	</button>
-        </div>
+
     </div>
-    
-    <div id="page-background" class="col-med-8" style="background-image: url(/images/{{ $layout->bgimage }})">
+
+
+
+
+    <div id="page-background" class="col-med-8" style="background-image: url(/images/{{-- $layout->bgimage --}})">
     	<ul id="edit-survey" class="col-med-6">
-    		@if ($layout->date)
+    		{{--@if ($layout->date)
         	<li><p style="text-align:center"><strong>{{ date('M d, Y') }}</strong></p></li>
     		@endif
     	
@@ -67,14 +66,9 @@
     			@endforeach
     			</ol>
     		</li>
+    		--}}
     	</ul>
-    	<footer id="content-footer">
-            @if ( $layout->footer == "wa")
-                @include('survey.layouts.footer_wa')    
-            @elseif ($layout->footer == "lop")
-                @include('survey.layouts.footer_lop')
-            @endif
-        </footer>
+
     	
     	
     </div>

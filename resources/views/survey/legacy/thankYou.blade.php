@@ -32,7 +32,7 @@
 	    	document.location.href = 'https://ts970.isrefer.com/go/rfid/afPaCof/';
 	    }, 500);
 	        
-        	  return 'WAIT BEFORE YOU GO! CLICK The "Stay on this page" Button Or The “CANCEL” Button Right Now! ' + 
+        	  return 'WAIT BEFORE YOU GO! CLICK The "Stay on this page" Button Or The ï¿½CANCELï¿½ Button Right Now! ' + 
               'I\'d like to mail you a Free Safe Wallet Shield.  It will help protect your new chip enabled credit ' +
               'cards against thieve and hackers GET Your Free Safe Wallet Shield Here!';
 	    }));
@@ -59,14 +59,14 @@
 		
 		<!-- include retirement for survey 1 -->
 		@foreach($survey->ads1 as $ad)
-			@include('survey.ads.' . $ad->template_name)
+			@include('survey.legacy.ads.' . $ad->template_name)
 			<hr>
 		@endforeach
 		
 		@if (count($survey->ads2) > 0)
 		<section id="re" class="container-fluid">
 		@foreach($survey->ads2 as $ad)
-			@include('survey.ads.' . $ad->template_name)
+			@include('survey.legacy.ads.' . $ad->template_name)
 		@endforeach
 		</section>
 		@endif
@@ -79,9 +79,9 @@
 	    
 		<footer id="content-footer">
             @if ( $survey->layout->org == "WA")
-                @include('survey.layouts.footer_wa')    
+                @include('survey.legacy.footer_wa')
             @elseif ($survey->layout->org == "LOP")
-                @include('survey.layouts.footer_lop')
+                @include('survey.legacy.footer_lop')
             @endif
         </footer>
 

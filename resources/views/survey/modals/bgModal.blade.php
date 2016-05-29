@@ -23,7 +23,8 @@
         <!-- Tab panes -->
         <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="bg-image-selector">
-    	@for ($i=0; $i < count($images); $i++)
+    	{{--
+        @for ($i=0; $i < count($images); $i++)
         	@if ($i == 0 || $i % 5 == 0)
 			<div class="row">
 			@endif
@@ -36,7 +37,7 @@
 			</div>
 			@endif
     	@endfor	
-    
+        --}}
 			<div id="image-upload">
     			{!! Form::open() !!}
     			{!! Form::label('image', 'Add New Image') !!}

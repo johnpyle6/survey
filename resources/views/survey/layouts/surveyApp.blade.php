@@ -2,7 +2,7 @@
 <html lang="eng">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>The Wealth Authority</title>
+    <title>{{ $survey->name }}</title>
     <link rel="Shortcut icon" href="http://www.wealthauthority.com/wp-content/themes/the_wealth_authority/images/favicon.ico" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 

@@ -146,9 +146,9 @@
 
         <footer id="content-footer">
             @if ( $survey->layout->org == "WA")
-                @include('survey.layouts.footer_wa')    
+                @include('survey.legacy.footer_wa')
             @elseif ($survey->layout->org == "LOP")
-                @include('survey.layouts.footer_lop')
+                @include('survey.legacy.footer_lop')
             @endif
         </footer>
             

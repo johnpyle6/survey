@@ -14,8 +14,8 @@ use App\Http\Controllers\SurveyController;
 */
 
 Route::get('/', function () {
-    $surveys = DB::select("SELECT id, name FROM survey");
-    return view('survey.home', ['surveys' => $surveys]);
+    Route::auth();
+    return view('home');
 }); 
 
 
@@ -25,29 +25,11 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/home', 'HomeController@index');
 });
 
-Route::group(['middleware' => 'web'], function () {
-    Route::auth();
 
-    Route::get('/home', 'HomeController@index');
-});
-
-Route::group(['middleware' => 'web'], function () {
-    Route::auth();
-
-    Route::get('/home', 'HomeController@index');
-});
-
-
-Route::get('error', 'SurveyController@error');
-/*
- * Legacy URLs for 1st survey
- */
-Route::get('survey/{survey_id}', 'SurveyController@index');
-Route::post('survey/saveResponse', 'SurveyController@saveResponse');
 
 /**
  * Current Routes for survey 
- */
+ *
 Route::post('survey/home', 'SurveyController@home');
 Route::get('survey/view/{survey_id}/{tag_id?}', 'SurveyController@view');
 Route::get('survey/thank-you/{survey_id}', 'SurveyController@thankYou');
@@ -57,7 +39,15 @@ Route::post('survey/submit', 'SurveyController@submit');
 /**
  * Routes for survey creation
  */
-Route::get('survey/edit/{survey_id}', 'SurveyController@edit');
+Route::get('edit/{survey_id}', 'SurveyController@edit');
+
+
+Route::resource('content', 'ContentController',['parameters' => [
+    'content' => 'contentId', 'content' => 'survey_id']]);
+
+
+
+/*
 Route::get('survey/getAnswers', 'SurveyController@getAnswers');
 Route::get('survey/rest/getLists', 'SurveyController@getLists');
 
@@ -75,10 +65,9 @@ Route::post('survey/rest/editComponent', 'SurveyController@editComponent');
 Route::post('survey/rest/saveBgImage', 'SurveyController@saveBgImage');
 Route::post('survey/rest/remove', 'SurveyController@removeContent');
 Route::post('survey/rest/saveFooter', 'SurveyController@saveFooter');
+
 /**
  * Test routes
  */
-Route::get('survey/test/{survey_id}', 'SurveyController@modelTest');
-Route::get('signup/test', 'SurveyController@formSubmitHandler');
-
-Route::get('signup/test/newtemplate', 'SurveyController@newTemplate');
+Route::get('test/{survey_id}', 'SurveyController@modelTest');
+Route::get('test/newtemplate', 'SurveyController@newTemplate');

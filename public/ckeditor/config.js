@@ -26,7 +26,7 @@ CKEDITOR.editorConfig = function( config ) {
 	];
 
 	// The default plugins included in the basic setup define some buttons that
-	// are not needed in a basic editor. They are removed here.
+	// are not needed in a basic tabs. They are removed here.
 	config.removeButtons = 'Cut,Copy,Paste';
 
 	// Dialog windows are also simplified.

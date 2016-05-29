@@ -14,14 +14,77 @@ class SurveyController extends Controller
         //$this->middleware('auth');
     }
     
-    
-    /** Route Controllers **/
-    function index(){}
-
     function newTemplate(){
         $survey = Survey::where('id', 1)->first();
         return view('survey.layouts.surveyApp', ['survey' => $survey, ]);
     }
+
+
+
+
+    function edit($survey_id)
+    {
+        if ($survey_id == "new") {
+            $survey_id = $this->createSurvey();
+            return redirect('edit/' . $survey_id);
+        } else {
+            return view('survey.create');
+            /*$components = DB::select("
+                SELECT a.order, b.content, b.id
+                FROM survey_components a, components b
+                WHERE a.survey_id = $survey_id
+                    AND b.id = a.component_id
+                ORDER BY a.order");
+
+            $images = DB::select("
+                SELECT filename, id
+                FROM survey_images
+            ");
+
+            $layout = DB::select("
+                SELECT 
+                    a.name, a.footer, a.date, b.filename bgimage
+                FROM 
+                    layouts a
+                LEFT JOIN images b
+                	ON a.bg_image_id = b.id
+                WHERE 
+                    a.id = $survey_id");
+            if ($layout) {
+                $layout = $layout[0];
+            }
+
+
+            $questions = DB::select("
+                SELECT id, text
+                FROM questions
+            ");
+
+            $answers = DB::select("
+                SELECT id, text
+                FROM answers 
+            ");
+
+            $survey = new \stdClass();
+            $survey->id = $survey_id;
+            $survey->questions = $this->get_survey_questions($survey_id);
+            $lists = $this->getLists();
+            $ads = $this->getAds();
+            */
+
+            //print_r($components);
+            
+                //compact($components, $images, $layout, $questions, $answers, $survey, $lists, $ads));
+
+        }
+    }
+
+
+
+
+
+
+
 
     function view($survey_id, $tag = 'none'){
         $survey = $this->buildSurvey($survey_id, $tag);
@@ -45,61 +108,8 @@ class SurveyController extends Controller
         return redirect('/survey/thank-you/' . $request->get('surveyId') );        
     }
     
-    function edit($survey_id){
-        
-        
-        if ($survey_id == "new"){
-            $survey_id = $this->createSurvey();
-            return redirect('survey/edit/' . $survey_id);
-        }else{
-            $components = DB::select("
-                SELECT a.order, b.content, b.id
-                FROM survey_components a, components b
-                WHERE a.survey_id = $survey_id
-                    AND b.id = a.component_id
-                ORDER BY a.order");
-            
-            $images = DB::select("
-                SELECT filename, id
-                FROM survey_images
-            ");
-            
-            $layout = DB::select("
-                SELECT 
-                    a.name, a.footer, a.date, b.filename bgimage
-                FROM 
-                    layouts a
-                LEFT JOIN images b
-                	ON a.bg_image_id = b.id
-                WHERE 
-                    a.id = $survey_id");
-            if ($layout){
-                $layout = $layout[0];
-            }
-            
-            
-            $questions = DB::select("
-                SELECT id, text
-                FROM questions
-            ");
-            
-            $answers = DB::select("
-                SELECT id, text
-                FROM answers 
-            ");
-            
-            $survey = new \stdClass();
-            $survey->id = $survey_id;
-            $survey->questions = $this->get_survey_questions($survey_id);
-            $lists = $this->getLists();
-            $ads = $this->getAds();
-            
-            //print_r($components);    
-            return view('survey.create',
-                compact($components,$images,$layout,$questions,$answers,$survey,$lists,$ads)
-            );
-        }
-    }
+
+
 
 
 
@@ -108,7 +118,7 @@ class SurveyController extends Controller
 *************************************************/
 
     function createSurvey(){
-        $id = DB::table('layouts')->insertGetId();
+        $id = DB::table('surveys')->insertGetId([]);
         return $id;
     }
 
@@ -124,7 +134,7 @@ class SurveyController extends Controller
             'content' => $req->get('html'),
         ]);
 
-        echo json_encode([ "id" => $id]);
+        return $id;
     }
 
     function editComponent(Request $req){
@@ -133,7 +143,7 @@ class SurveyController extends Controller
             ->where( 'id', $req->get('id') )
             ->update(['content' => $req->get('html')]);
         
-        echo json_encode(["success" => $success]);
+        return $success;
     }
 
     function saveImage(Request $req){
@@ -267,7 +277,7 @@ class SurveyController extends Controller
             'order' => $req->get('order'),
         ]);
 
-        echo $success;
+        return $success;
     }
 
     // TODO: rename to delete_content_from_survey
@@ -275,7 +285,7 @@ class SurveyController extends Controller
         $success = DB::table('components')
             ->where('component_id', $req->get('id'))
             ->delete();
-        echo $success;
+        return $success;
     }
 
 
