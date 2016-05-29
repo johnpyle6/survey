@@ -22,6 +22,11 @@
     	<div id="toolbox-date" class="toolbox-item btn btn-default"  data-toggle="tooltip" data-placement="left" title="Date" >
     		<span class="glyphicon glyphicon-calendar"></span>
     	</div>
+
+		<div id="toolbox-footer" class="toolbox-item btn btn-default"  data-toggle="tooltip" data-placement="left" title="Footer" >
+			<span class="glyphicon  glyphicon-download-alt"></span>
+		</div>
+
     	<div id="toolbox-bg" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Set Background Color">
     		<span class="glyphicon background-btn" onclick="$('#bgModal').modal('toggle')"></span>
     	</div>

@@ -55,7 +55,7 @@ class ContentController extends Controller
      */
     public function show($id)
     {
-        return App\Content::find($id);
+        return \App\Content::find($id);
     }
 
     /**
@@ -109,5 +109,22 @@ class ContentController extends Controller
         $content->delete();
 
         return "true";
+    }
+
+    public function attachTag(Request $request){
+        $tag_name = $request->get('tag');
+        $tag = \App\Tag::where('name', $tag_name)->first();
+        $exists = empty($tag);
+
+        if ($exists){
+            $tag = new \App\Tag;
+            $tag->name = $tag_name;
+            $tag->save();
+        }
+
+        $content = \App\Content::find( $request->get('content_id') );
+        if (!empty($content)) {
+            $content->tags()->attach($tag->id);
+        }
     }
 }

@@ -30,24 +30,6 @@ function imgSelect(ele){
     $(ele).addClass('imgSelected');
 }
 
-function insertImg(){
-    if ( $('#image-form').children("input#image").val() == ''){
-        var editSurvey = $('#edit-survey');
-        var id = editSurvey.children().length;
-        
-        editSurvey.append(
-            '<li id="comp-' + id + '">' +
-                '<p>' +
-                    '<img class="center-block img-responsive header-img" src="/images/trump.jpg" alt="">' +
-                '</p>' +
-            '</li>'
-        );
-            
-        var imgid = $('a.imgSelected').children('img').attr('imgid');    
-    }else{
-        $('#image-form').submit();
-    }
-}
 
 function selectColor(color){
     $('#bg-color').val(color);
@@ -87,13 +69,15 @@ var tools = {
     dropHandler : function(event, ui ) {
         var id = ui.draggable.attr('id');
         if (id == 'toolbox-text'){
-            tools.createContent( tools.insertTextContentEditor );
+            tools.createContent( tools.insertTextContentEditor, "text" );
 
         }else if (id == 'toolbox-image'){
             $('#bgImageModal').modal('toggle');
 
         }else if (id == 'toolbox-date'){
             tools.insertDate();
+        }else if (id == 'toolbox-footer'){
+            tools.insertFooter();
         }
 
         var next = $('#' + id).next();
@@ -106,13 +90,11 @@ var tools = {
 
 
 
-    insertTextContentEditor : function(id){
+    insertTextContentEditor : function(id, role){
         var editSurvey = $('#edit-survey');
-        //var id = editSurvey.children("li").length +1;
 
-        /** TODO: remove id and just use content id for all id's **/
         editSurvey.append(
-            '<li id="comp-' + id + '">' +
+            '<li id="comp-' + id + '" role="' + role + '">' +
                 '<div class="ed-comp" id="ed-comp-' + id + '">' +
                     '<textarea class="" id="ed-' + id + '"></textarea><br>' +
                     '<button class="btn btn-primary" onclick="tools.saveContent(' + id + ')">save</button>' +
@@ -129,8 +111,10 @@ var tools = {
             '   </div>' +
             '</li>');
 
-
+        $('li[role="footer"]').remove().appendTo( editSurvey );
         return CKEDITOR.replace('ed-' + id);
+
+
     },
 
 
@@ -164,30 +148,20 @@ var tools = {
 
 
     deleteContent: function(id){
-
-        $.ajax({
-            type: "POST",
-            url: '/content/' + id,
-            data: {
-                survey_id: 10,
+        $.post(
+            '/content/' + id,
+            {   survey_id: 10,
                 _method: "DELETE"
-            },
-            success: function(data){
-                console.debug(data);
-                $('#comp-' + id).remove();
-            },
-            error: function(req, stat, err){
-                console.debug(req);
-                console.debug(stat);
-                console.debug(err);
-            },
-            dataType: 'json'
+            }
+        ).done(function(data){
+            console.debug(data);
+            $('#comp-' + id).remove();
+        }).fail(function(req, stat, err) {
+            console.debug(req);
+            console.debug(stat);
+            console.debug(err);
         });
     },
-
-
-
-
 
 
 
@@ -198,21 +172,121 @@ var tools = {
 
     insertDate : function(){
         this.createContent( function(contentId){
+            this.tagContent(contentId, 'date');
+
             /* There really has to be a better way */
-            ed = tools.insertTextContentEditor(contentId);
+            ed = tools.insertTextContentEditor(contentId, 'date');
             setTimeout(function() {
                 ed.document
                     .getBody()
-                    .setHtml('<p><span id="date">' + new Date().toDateString() + '</span></p>');
+                    .setHtml('' +
+                        '<p><span id="date">' +
+                            new Date().toDateString() +
+                        '</span></p>'
+                    );
             }, 100);
         });
     },
 
-    insertImage : function(){
+    insertImage : function(image_name){
         this.createContent( function(contentId){
+
+
+
+            var editSurvey = $('#edit-survey');
+            var id = editSurvey.children().length;
+
+            editSurvey.append(
+                '<li id="comp-' + id + '">' +
+                '<p>' +
+                '<img class="center-block img-responsive header-img" src="/images/trump.jpg" alt="">' +
+                '</p>' +
+                '</li>'
+            );
+
+            var imgid = $('a.imgSelected').children('img').attr('imgid');
+            
+            
+            
+            
+            
+            this.tagContent(contentId, 'image');
+
+            $.post(
+                "/content",
+                {   'content' : code,
+                    'id' : componentid,
+                    'survey_id' : window.location.pathname.split('/').pop(),
+                    'order' : $('#edit-survey').children("li").length
+                }
+            ).done(function(data){
+                //console.debug(data);
+                var editSurvey = $('#edit-survey');
+
+                editSurvey.append(
+                    '<li role="image">' +
+                      '<img src="/images/' + image_name + '">' +
+                    '</li>'
+                );
+                
+                $('li[role="footer"]').remove().appendTo( editSurvey );
+
+            }).fail(function(data){
+                /** TODO: NON_USER RUNTIME ERRORS **/
+                console.debug(data);
+            });
+
+
+
 
         });
     },
+
+
+    insertFooter : function(){
+        this.createContent( function(contentId){
+            tools.insertTextContentEditor(contentId, 'footer');
+        });
+    },
+
+
+
+
+    tagContent : function(content_id, tag){
+        $.post(
+            '/content/tag',
+            {   content_id: content_id,
+                tag: tag
+            }
+        ).done(function(data){
+            console.debug(data);
+        }).fail(function(req, stat, err) {
+            console.debug(req);
+            console.debug(stat);
+            console.debug(err);
+        });
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -245,29 +319,7 @@ var tools = {
 
 
     
-    addFooter: function(){
-        org = $('input[name="footer"]:checked').val();
-        console.debug(org);
-        $.ajax({
-            type: "POST",
-            url: '/survey/rest/saveFooter',
-            data: { 
-                'footer' : org,
-                'survey_id' : window.location.pathname.split('/').pop(),
-                
-            },
-            success: function(data){
-                console.debug(data);
-                //window.location.reload();
-            },
-            error: function(req, stat, err){
-                console.debug(req);
-                console.debug(stat);
-                console.debug(err);
-            },
-            dataType: 'json'
-        });
-    },
+
         
     addNewQuestion : function(){
         var code = CKEDITOR.instances['ed-new-question'].document.getBody().getHtml();

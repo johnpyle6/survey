@@ -41,6 +41,7 @@ Route::post('survey/submit', 'SurveyController@submit');
  */
 Route::get('edit/{survey_id}', 'SurveyController@edit');
 
+Route::post('content/tag', 'ContentController@attachTag');
 
 Route::resource('content', 'ContentController',['parameters' => [
     'content' => 'contentId', 'content' => 'survey_id']]);

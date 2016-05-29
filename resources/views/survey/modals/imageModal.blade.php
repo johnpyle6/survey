@@ -24,47 +24,24 @@
             </div>  
         
     		<div id="image-upload">
-    			{!! Form::open(['files' => true, 'url' => 'survey/rest/saveImage', 'class' => '', 'id' => 'image-form']) !!}
-    			{!! Form::label('image', 'Add New Image') !!}
-    			{!! Form::file('image') !!}
-    			{{-- {!! Form::hidden('survey_id', $survey->id) !!} --}}
+    			{!! Form::open(['files' => true, 'url' => 'survey/rest/saveImage', 'class' => 'form-inline', 'id' => 'image-form']) !!}
+                <div class="form-group">
+
+    			{!! Form::file('image', ['class' => 'form-control']) !!}
+                </div>
+                <div class="form-group">
+                {!! Form::submit('Upload', ['class' => 'btn btn-default form-control']) !!}
     			{!! Form::close() !!}
-    			
+    			</div>
     		</div>	        	
         
         
         </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="insertImg()" data-dismiss="modal">Save changes</button>
+        <button type="button" class="btn btn-primary" onclick="tools.insertImage()" data-dismiss="modal">Save changes</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
-<div class="modal fade" tabindex="-1" role="dialog" id="imageModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        	        <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Insert Image</h4>
-            </div>
-        <div class="modal-body">
-    		<div id="image-upload">
-    			{!! Form::open(['files' => true, 'url' => 'survey/rest/saveImage', 'class' => '', 'id' => 'image-form']) !!}
-    			{!! Form::label('image', 'Add New Image') !!}
-    			{!! Form::file('image') !!}
-                {{-- {!! Form::hidden('survey_id', $survey->id) !!} --}}
-    			{!! Form::close() !!}
-    		</div>	        	
-        </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="insertImg()" data-dismiss="modal">Save changes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->

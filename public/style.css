@@ -1,6 +1,6 @@
 #toolbox
 {
-	width: 265px;
+	width: 295px;
 	margin: 10px auto;
 }
 
@@ -254,7 +254,10 @@ li.preview-answer
 
 
 
-
+.tab-pane
+{
+	padding: 20px;
+}
 
 
 
