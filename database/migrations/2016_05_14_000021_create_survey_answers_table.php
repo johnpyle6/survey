@@ -14,20 +14,21 @@ class CreateSurveyAnswersTable extends Migration
     {
         Schema::create('survey_answers', function (Blueprint $table) {
             $table->increments('id');
-            $table->Integer('survey_question_id')->unsigned();
             $table->Integer('answer_id')->unsigned();
             $table->tinyInteger('answer_order');
             $table->timestamps();
 
+            $table->foreign('answer_id')->references('id')->on('answers');
+        });
 
-            $table->foreign('answer_id')
-                ->references('id')
-                ->on('answers');
+        Schema::create('survey_answer_survey_question', function (Blueprint $table) {
+            $table->integer('survey_question_id')->unsigned()->index();
+            $table->foreign('survey_question_id')->references('id')->on('survey_questions');
 
-            /*$table->foreign('survey_question_id')
-                ->references('id')
-                ->on('survey_questions');
-            */
+            $table->integer('survey_answer_id')->unsigned()->index();
+            $table->foreign('survey_answer_id')->references('id')->on('survey_answers');
+            $table->timestamps();
+
         });
     }
 

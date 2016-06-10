@@ -27,13 +27,14 @@
 	</div>
 </section>
 
-
+@include('survey.modals.tag')
 @include('survey.modals.imageModal')
-
 @include('survey.modals.newQuestion')
 @include('survey.modals.newAnswer')
 @include('survey.modals.bgModal')
-{{--@include('survey.modals.listModal') --}}
+
+@include('survey.layouts.editor-template')
+
 
 
 

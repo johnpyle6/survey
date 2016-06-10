@@ -12,8 +12,13 @@ class ImagesTableSeeder extends Seeder
     public function run()
     {
         DB::table('images')->insert([
-            [ 'filename' => 'wabg6.jpg', 'type' => 'b', ],
-            [ 'filename' => 'bg2.png', 'type' => 'b', ],
+            [ 'filename' => 'wabg6.jpg', ],
+            [ 'filename' => 'bg2.png', ],
+            [ 'filename' => 'a.jpg', ],
+            [ 'filename' => 'brnvideo1.jpg', ],
+            [ 'filename' => 'donald_trump.jpg', ],
+            [ 'filename' => 'trump.jpg', ],
+            [ 'filename' => 'trump2.jpg', ],
         ]);
     }
 }

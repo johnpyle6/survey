@@ -15,5 +15,15 @@ class VerifyCsrfToken extends BaseVerifier
         'survey/rest/*',
         'content',
         'content/*',
+        'survey/*',
+        'question/*',
+        'question',
+        'answer',
+        'survey',
+        'survey-question/*',
+        'survey-answer/*',
+        'survey-question',
+        'survey-answer',
+        'image',
     ];
 }

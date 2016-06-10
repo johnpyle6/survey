@@ -14,12 +14,8 @@ class CreateSurveysTable extends Migration
     {
         Schema::create('surveys', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
             $table->string('name');
-            $table->string('footer');
-            $table->boolean('date');
-            $table->smallInteger('bg_image_id');
-            $table->string('lists');
+            $table->timestamps();
         });
     }
 

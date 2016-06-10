@@ -1,14 +1,10 @@
 
-function saveReorder(){
-    $('#edit-survey').children("li").each(function(i,e){
-       console.debug( $(e).attr("componentid") );
-       // REST call here
-    });
-}
+
 
 function toggleEditor(id){
     $('#ed-comp-' + id).toggle();
     $('#ed-cont-' + id).toggle();
+    $('#ed-cont-btns-' + id).toggle();
 }
 
 function makeToolboxItem(type){
@@ -19,6 +15,8 @@ function makeToolboxItem(type){
         item += ' title="Image"><span class="glyphicon glyphicon-picture">';
     }else if (type == 'toolbox-date'){
         item += 'title="Date"><span class="glyphicon glyphicon-calendar">';
+    }else if (type == 'toolbox-footer'){
+        item += 'title="Footer"><span class="glyphicon glyphicon-download-alt">';
     }
     item += '</span></div>';
     
@@ -35,25 +33,7 @@ function selectColor(color){
     $('#bg-color').val(color);
 }
 
-function saveBackground(ele){
-    //console.debug( $('.tab-content').children('.active').attr('id') )
-    var id = $('.tab-content').children('.active').attr('id');
-    if (id == 'bg-image-selector'){
-        /*var imgid = $('a.imgSelected').children('img').attr('imgid');
-        var src = $('a.imgSelected').children('img').attr('src');
-        $('#page-background')
-            .css('background', 'transparent url(' + src + ') no-repeat 0 0')
-            .css('background-size', '100%');
-        */
-        tools.saveBgImage();
-    }else if (id == 'bg-color-selector'){
-        var color = $('#bg-color').val();
-        $('#page-background')
-            .css('background-color', color);
-    }
-    
-    
-}
+
 
 
 
@@ -69,13 +49,14 @@ var tools = {
     dropHandler : function(event, ui ) {
         var id = ui.draggable.attr('id');
         if (id == 'toolbox-text'){
-            tools.createContent( tools.insertTextContentEditor, "text" );
+            tools.insertText();
 
         }else if (id == 'toolbox-image'){
             $('#bgImageModal').modal('toggle');
 
         }else if (id == 'toolbox-date'){
             tools.insertDate();
+
         }else if (id == 'toolbox-footer'){
             tools.insertFooter();
         }
@@ -90,27 +71,30 @@ var tools = {
 
 
 
-    insertTextContentEditor : function(id, role){
+    insertNewCKEditor : function(id, role){
         var editSurvey = $('#edit-survey');
 
-        editSurvey.append(
-            '<li id="comp-' + id + '" role="' + role + '">' +
-                '<div class="ed-comp" id="ed-comp-' + id + '">' +
-                    '<textarea class="" id="ed-' + id + '"></textarea><br>' +
-                    '<button class="btn btn-primary" onclick="tools.saveContent(' + id + ')">save</button>' +
-                    '<button class="btn" onclick="toggleEditor(' + id + ')">cancel</button> ' +
-                '</div>' +
-                '<div class="ed-cont" id="ed-cont-' + id + '">' +
-                    '<div class="btn btn-default editBtn" onclick="tools.deleteContent(' + id + ')">' +
-                        '<span class="glyphicon glyphicon-trash"></span>' +
-                    '</div>&nbsp;' +
-                    '<div class="btn btn-default editBtn" onclick="toggleEditor(' + id + ')">' +
-                        '<span class="glyphicon glyphicon-pencil"></span>' +
-                    '</div>' +
-                    '<div id="container-' + id + '"  ></div>' +
-            '   </div>' +
-            '</li>');
+        var template = $('#editor-template').clone()
+        template
+            .attr('id',"comp-" + id).attr('role', role)
+                .children('#editor-template-div1')
+                    .attr('id', "ed-comp-" + id )
+                    .children('textarea')
+                        .attr('id', "ed-" + id )
+                    .siblings('#editor-save-btn')
+                        .attr('onclick' , "tools.editText('" + id + "')")
+                    .siblings('#editor-cancel-btn')
+                        .attr("onclick", "toggleEditor('" + id + "')")
+                .parent().siblings('#editor-template-div2')
+                    .attr('id', "ed-cont-" + id )
+                    .children('#editor-delete-btn')
+                        .attr('onclick', "tools.detachContentFromSurvey('" + id + "')")
+                    .siblings('#editor-edit-btn')
+                        .attr('onclick', "toggleEditor('" + id + "')")
+                    .siblings('#container')
+                        .attr('id', "container-" + id);
 
+        editSurvey.append(template);
         $('li[role="footer"]').remove().appendTo( editSurvey );
         return CKEDITOR.replace('ed-' + id);
 
@@ -120,31 +104,30 @@ var tools = {
 
 
 
+    /** TODO: need a closure here but need to know how what gets passed from Create Content */
     createContent : function(success){
         $.get('/content/create', success);
     },
 
-    saveContent : function(id){
-        var code = CKEDITOR.instances['ed-' + id].document.getBody().getHtml();
-        var componentid = $('li#comp-' + id).attr('componentid');
+    saveContent : function(id, code, complete){
+        toggleEditor(id);
+        $('#container-' + id).html(code);
+        $('.date-container').html( new Date().toDateString() );
 
-        $.post(
-            "/content",
+        $.post( "/content",
             {   'content' : code,
-                'id' : componentid,
-                'survey_id' : window.location.pathname.split('/').pop(),
-                'order' : $('#edit-survey').children("li").length
+                'content_id' : id
             }
-        ).done(function(data){
-            //console.debug(data);
-            toggleEditor(id);
-            $('#container-' + id).html(code);
+        ).done(complete)
+        .fail(function(data){
+            /** TODO: NON_USER RUNTIME ERRORS **/ console.debug(data);}
+        );
 
-        }).fail(function(data){
-            /** TODO: NON_USER RUNTIME ERRORS **/
-            console.debug(data);
-        });
+        tools.attachContentToSurvey(id);
     },
+
+
+
 
 
     deleteContent: function(id){
@@ -163,75 +146,89 @@ var tools = {
         });
     },
 
+    
+    attachContentToSurvey : function(contentId){
+        // attach to survey
+        $.post( "/survey/attach",
+            {   'content_id' : contentId,
+                'survey_id' : window.location.pathname.split('/').pop()
+            }
+        ).done(function(data){
+            tools.saveOrder();
+        }).fail(function(data){
+            /** TODO: NON_USER RUNTIME ERRORS **/ console.debug(data);}
+        );
+    },
 
+    detachContentFromSurvey : function(contentId){
 
+        $.post( "/survey/detach",
+            {   'content_id' : contentId,
+                'survey_id' : window.location.pathname.split('/').pop()
+            }
+        ).done(function(data){
+            //tools.saveOrder();
+            $('#comp-' + contentId).remove();
 
+        }).fail(function(data){
+            /** TODO: NON_USER RUNTIME ERRORS **/ console.debug(data);}
+        );
+    },
 
+    insertText : function(id){
+        tools.createContent( function(id){
+            tools.insertNewCKEditor(id, "text")
+        } );
+    },
 
+    editText : function(id){
+        var code = CKEDITOR.instances['ed-' + id].getData();
 
+        code = code.replace(/\[\[.*\]\]/, '<span class="date-container"></span>');
+        console.debug(code);
+        this.saveContent(id, code);
+    },
 
     insertDate : function(){
-        this.createContent( function(contentId){
-            this.tagContent(contentId, 'date');
-
-            /* There really has to be a better way */
-            ed = tools.insertTextContentEditor(contentId, 'date');
-            setTimeout(function() {
-                ed.document
-                    .getBody()
-                    .setHtml('' +
-                        '<p><span id="date">' +
-                            new Date().toDateString() +
-                        '</span></p>'
-                    );
-            }, 100);
+        this.createContent( function(id){
+            tools.tagContent(id, 'date');
+            tools.insertNewCKEditor(id, 'date')
+                .on("instanceReady", function(e){
+                    this.setData('<p>[[' + new Date().toDateString() + ']]</p>');
+                });
         });
     },
 
     insertImage : function(image_name){
         this.createContent( function(contentId){
-
-
-
-            var editSurvey = $('#edit-survey');
-            var id = editSurvey.children().length;
-
-            editSurvey.append(
-                '<li id="comp-' + id + '">' +
-                '<p>' +
-                '<img class="center-block img-responsive header-img" src="/images/trump.jpg" alt="">' +
-                '</p>' +
-                '</li>'
-            );
-
-            var imgid = $('a.imgSelected').children('img').attr('imgid');
-            
-            
-            
-            
-            
-            this.tagContent(contentId, 'image');
+            //tools.tagContent(contentId, 'image');
+            var imageName = $('.imgSelected').attr('src');
+            var contentImg = '<img class="img-responsive" src="' + imageName + '">';
 
             $.post(
                 "/content",
-                {   'content' : code,
-                    'id' : componentid,
-                    'survey_id' : window.location.pathname.split('/').pop(),
-                    'order' : $('#edit-survey').children("li").length
+                {   'content_id' : contentId,
+                    'content' : contentImg,
                 }
-            ).done(function(data){
+            ).done( function(data){
+                tools.attachContentToSurvey(contentId);
                 //console.debug(data);
-                var editSurvey = $('#edit-survey');
 
-                editSurvey.append(
-                    '<li role="image">' +
-                      '<img src="/images/' + image_name + '">' +
-                    '</li>'
-                );
-                
+                var editSurvey = $('#edit-survey');
+                editSurvey.append('<li role="image" id="img-' + contentId + '">' +
+                    '<div class="btn btn-info editBtn" onclick="tools.deleteImage(' + contentId + ')">' +
+                        '<span class="glyphicon glyphicon-trash"></span>' +
+                    '</div>' +
+                    contentImg +
+                    '</li>');
+
+
+
+
+
                 $('li[role="footer"]').remove().appendTo( editSurvey );
 
-            }).fail(function(data){
+            }).fail( function(data){
                 /** TODO: NON_USER RUNTIME ERRORS **/
                 console.debug(data);
             });
@@ -242,21 +239,57 @@ var tools = {
         });
     },
 
+    deleteImage : function(id){
+        $('#img-' + id).remove();
+        this.deleteContent(id);
+    },
 
     insertFooter : function(){
-        this.createContent( function(contentId){
-            tools.insertTextContentEditor(contentId, 'footer');
+        tools.createContent( function(id){
+            tools.tagContent(id, 'footer');
+            tools.insertNewCKEditor(id, 'footer');
         });
+    },
+
+
+    tag : function(event){
+        if ($.inArray('tagSurvey', event.target.classList) >= 0) {
+            $('#saveTagBtn').click(tools.tagSurvey);
+            $('#tagModal').modal('toggle');
+        }else if ($.inArray('tagContent', event.target.classList) >= 0) {
+            $('#saveTagBtn').click(tools.tagContent);
+            var contentId = event.target.parentNode.parentNode.id.substr(-1);
+            $('#tagModalContentId').val( contentId );
+            $('#tagModal').modal('toggle');
+        }
     },
 
 
 
 
-    tagContent : function(content_id, tag){
+    tagSurvey : function(){
+        $.post(
+            '/survey/tag',
+            {   survey_id: window.location.pathname.split('/').pop(),
+                tag: $('#tagName').val()
+            }
+        ).done(function(data){
+            console.debug(data);
+        }).fail(function(req, stat, err) {
+            console.debug(req);
+            console.debug(stat);
+            console.debug(err);
+        });
+    },
+
+    tagContent : function(){
+        var contentId = $('#tagModalContentId').val();
+        var tagName = $('#tagName').val();
+
         $.post(
             '/content/tag',
-            {   content_id: content_id,
-                tag: tag
+            {   content_id: contentId,
+                tag: tagName
             }
         ).done(function(data){
             console.debug(data);
@@ -269,12 +302,369 @@ var tools = {
 
 
 
+    saveOrder : function (){
+        $('#edit-survey')
+            .children("li")
+            .each(function(i,e){
+                $.post(
+                    '/survey/order',
+                    { content_id : $(e).attr('id').split('-')[1],
+                        survey_id : window.location.pathname.split('/').pop(),
+                        'order' : i
+                    }
+                ).done(function(data){
+                    //console.debug(data);
+                }).fail(function(req, stat, err) {
+                    console.debug(req);
+                    console.debug(stat);
+                    console.debug(err);
+                });
+        });
+    },
+
+
+
+
+    createQuestion : function(success){
+        $.get('/question/create', success);
+    },
+
+    saveQuestion : function(){
+        //$('#container-' + id).html(code);
+        //$('.date-container').html( new Date().toDateString() );
+        tools.createQuestion( function(data) {
+            $.post("/question",
+                {   'text': CKEDITOR.instances['ed-new-question'].getData(),
+                    'question_id': data.id
+                }
+            ).done(function(data){})
+            .fail(function (data) {
+                    /** TODO: NON_USER RUNTIME ERRORS **/ console.debug(data);
+            });
+        });
+
+        //tools.attachContentToSurvey(id);
+    },
+
+
+    createAnswer : function(success){
+        $.get('/answer/create', success);
+    },
+
+    saveAnswer : function(){
+        //$('#container-' + id).html(code);
+        //$('.date-container').html( new Date().toDateString() );
+        tools.createAnswer( function(data) {
+            $.post("/answer",
+                {   'text': CKEDITOR.instances['ed-new-answer'].getData(),
+                    'answer_id': data.id
+                }
+            ).done(function(data){})
+                .fail(function (data) {
+                    /** TODO: NON_USER RUNTIME ERRORS **/ console.debug(data);
+                });
+        });
+
+        //tools.attachContentToSurvey(id);
+    },
+
+
+
+    saveBackground : function(ele){
+        var css = "body { ";
+        if ( $('#bg-image-selector.active').length > 0 ){
+
+            var imgid = $('a.imgSelected').children('img').attr('imgid');
+            var src = $('a.imgSelected').children('img').attr('src');
+            $('#page-background')
+                .css('background', 'transparent url(' + src + ') no-repeat 0 0')
+                .css('background-size', '100%');
+
+            css += 'background: transparent url(' + src + ') no-repeat 0 0; background-size: 100%;';
+
+            tools.saveBgImage();
+        }else if ( $('#bg-color-selector.active').length > 0 ){
+            css += 'background-color: ' + $('#bg-color').val() + ";";
+
+            $('#page-background')
+                .css('background-color', $('#bg-color').val());
+        }
+
+        css += "}";
+
+        tools.createContent(function(id){
+            tools.saveContent(id, css, function(){
+                tools.tagContent(id, 'background');
+            });
+        });
+
+    },
+
+
+
+    populateQuestions : function(complete){
+        $.get('/question', function(data){
+            $.each(data, function(i, e){
+                if ($('#qa-preview').children('li[questionid=' + e.id + ']').length == 0) {
+                    $('#existing-questions').append(
+                        '<li class="btn btn-default" questionId="' + e.id + '">' +
+                        e.text +
+                        '</li>'
+                    );
+                }
+            });
+            complete();
+        });
+    },
+
+    populateAnswers : function(complete){
+        $.get('/answer', function(data){
+            $.each(data, function(i, e){
+                $('#existing-answers').append(
+                    '<li class="btn btn-default" answerId="' + e.id + '">' +
+                        e.text +
+                    '</li>'
+                );
+            })
+
+            complete();;
+        });
+    },
+
+
+    createSurveyQuestion : function(ele){
+        var order = $('#qa-preview').children('li').length + 1;
+        $.post( '/survey-question',
+            {   survey_id: window.location.pathname.split('/').pop(),
+                question_id:  $(ele).attr('questionId'),
+                order : order
+            }
+        ).done( function(data){
+            console.debug(data);
+            tools.addQuestionToPreview(ele, data);
+        });
+    },
+
+    createSurveyAnswer : function(ele){
+        var surveyQuestionId = $('#qa-preview li.selected').attr('surveyquestionid');
+        var answerId = $(ele).attr('answerId');
+
+        if ($('li[answerid=' + answerId + ']').length > 1){
+            alert("You already have that answer");
+        }else {
+            $.post('/survey-answer',
+                {
+                    survey_question_id: surveyQuestionId,
+                    answer_id: answerId,
+                    order: 0
+                }
+            ).done(function (data) {
+                console.debug(data);
+                tools.addAnswerToPreview(ele, data);
+            });
+        }
+    },
 
 
 
 
 
 
+    saveSurvey : function(){
+        $('#qa-preview').children('li').each( function(i,e){
+            $.ajax({
+                type: 'PUT',
+                url: "/survey-question/" + $(e).attr('surveyquestionid'),
+                data: { 'order': i + 1 },
+                success: function (data) {
+                    console.debug(data);
+                },
+                error: function (data) {
+                    console.debug(data);
+                },
+                dataType: 'json'
+            });
+
+            $(e).children('ul').children('li').each( function (ii, ee) {
+                $.ajax({
+                    type: 'PUT',
+                    url: "/survey-answer/" + $(ee).attr('surveyanswerid'),
+                    data: { 'order': ii + 1 },
+                    success: function (data) {
+                        console.debug(data);
+                    },
+                    error: function (data) {
+                        console.debug(data);
+                    },
+                    dataType: 'json'
+                });
+            });
+
+        });
+        $('#save-survey-btn').removeClass('btn-info');
+    },
+
+
+    addQuestionToPreview : function(ele, data){
+        var questionId = $(ele).attr('questionId');
+
+        $('#qa-preview li').removeClass('selected');
+
+        $('li.preview-answer').removeClass('btn-info');
+
+        // Add the question with a delete button and a ul for the answers to be appended to
+        $('#qa-preview').append(
+            '<li questionId="' + questionId + '" surveyquestionid="'+ data.id +'" class="selected">' +
+                '<button type="button" class="close" aria-label="Close">' +
+                    '<span aria-hidden="true" onclick="tools.deleteSurveyQuestion(' + data.id + ')">' +
+                        '&times;' +
+                    '</span>' +
+                '</button>' +
+                $(ele).html() +
+                '<ul id="q-' + ($('qa-preview').children("li").length + 1) + '"></ul>' +
+            '</li>');
+
+        // Make the answers sortable
+        $('#qa-preview li ul').sortable()
+
+        $('#qa-container').append(
+            '<li questionId="' + questionId + '" class="selected">' +
+            $(ele).html() +
+            '<ul id="q-' + ($('qa-preview').children("li").length + 1) + '"></ul>' +
+            '</li>');
+
+
+        $('li[questionId="' + questionId + '"]').click( function() {
+            $('#qa-preview li').removeClass('selected');
+            $(this).addClass('selected');
+        });
+
+        $("#qa-preview li" ).disableSelection();
+        $('#qa-preview').sortable({
+            update: function (event, ui){
+                //tools.saveAllQuestions();
+            }
+        });
+    },
+
+
+    removeQuestionFromPreview : function(surveyQuestionid){
+        $('li[surveyquestionid=' + surveyQuestionid + ']').remove();
+    },
+
+
+    addAnswerToPreview : function(ele, data) {
+        if ( $('#qa-preview li.selected').length > 0 ) {
+            var questionId = $('#qa-preview li.selected').attr('questionId');
+            var surveyQuestionId = $('#qa-preview li.selected').attr('surveyquestionid');
+            var answerId = $(ele).attr('answerId');
+
+            $('li.preview-answer').removeClass('btn-info');
+
+
+            $('#qa-preview li.selected ul').append(
+                '<li class="preview-answer" answerId="' + answerId + '" surveyanswerid="'+ data.id +'">' +
+                   '<button type="button" class="close" aria-label="Close">' +
+                        '<span aria-hidden="true" onclick="tools.deleteSurveyAnswer(' + data.id + ', ' + surveyQuestionId + ')">' +
+                            '&times;' +
+                      '</span>' +
+                   '</button>' +
+                $(ele).html() +
+                '</li>');
+
+            $('#qa-container li[questionid="' + questionId + '"] ul').append('<li>' + $(ele).html() + '</li>');
+        }
+    },
+
+    removeAnswerFromPreview : function(surveyAnswerid){
+        $('li[surveyanswerid=' + surveyAnswerid + ']').remove();
+    },
+
+    previewDropHandler : function(event, ui) {
+        var ele = ui.draggable;
+
+        if (ele.parent().attr('id') == 'existing-questions') {
+            tools.createSurveyQuestion(ele)
+            ui.draggable.remove();
+        } else if (ele.parent().attr('id') == 'existing-answers') {
+            tools.createSurveyAnswer(ele);
+        }
+    },
+
+
+    saveName : function(){
+        var name = $('#survey-name').val();
+        $.ajax({
+            type: 'PUT',
+            url: "/survey/" + window.location.pathname.split('/').pop(),
+            data: { 'name': name },
+            success: function (data) {
+                console.debug(data);
+            },
+            error: function (data) {
+                console.debug(data);
+            },
+            dataType: 'json'
+        });
+    },
+
+
+    deleteSurvey : function() {
+        $.ajax({
+            type: 'DELETE',
+            url: "/survey/" + window.location.pathname.split('/').pop(),
+            data: { },
+            success: function (data) {
+                console.debug(data);
+            },
+            error: function (data) {
+                console.debug(data);
+            },
+            dataType: 'json'
+        });
+    },
+
+
+    deleteSurveyQuestion : function(surveyQuestionId){
+        //var questionId = $(ele).parent().parent().attr('questionid');
+        //console.debug(qid);
+
+        $.ajax({
+            type: 'DELETE',
+            url: "/survey-question/" + surveyQuestionId,
+            success: function (data) {
+                tools.removeQuestionFromPreview(surveyQuestionId);
+                console.debug(data);
+            },
+            error: function (data) {
+                console.debug('error');
+                console.debug(data);
+            },
+            dataType: 'json'
+        });
+
+
+    },
+
+    deleteSurveyAnswer : function(surveyAnswerId, surveyQuestionId){
+        //var answerId = $(ele).parent().parent().attr('answerid');
+        //console.debug(qid);
+
+        $.ajax({
+            type: 'DELETE',
+            url: "/survey-answer/" + surveyAnswerId,
+            data: { survey_question_id : surveyQuestionId },
+            success: function (data) {
+                tools.removeAnswerFromPreview(surveyAnswerId);
+                console.debug(data);
+            },
+            error: function (data) {
+                console.debug(data);
+            },
+            dataType: 'json'
+        });
+        //$(ele).parent().parent().remove();
+    },
 
 
 
@@ -303,7 +693,6 @@ var tools = {
             data: { 
                 'bg_image_id' : id,
                 'survey_id' : window.location.pathname.split('/').pop(),
-                
             },
             success: function(data){
                 window.location.reload();
@@ -318,279 +707,62 @@ var tools = {
     },
 
 
-    
-
-        
-    addNewQuestion : function(){
-        var code = CKEDITOR.instances['ed-new-question'].document.getBody().getHtml();
-       
-        
-        $.post(
-            "/survey/rest/saveQuestion",
-            { text: code }
-        ).done( function(data){
-            console.debug(data);
-            
-            $('ul#existing-questions').prepend(
-                '<li class="btn btn-default">' +
-                code +
-                '</li>'
-            );
-            
-        }).fail(function(data){
-            console.debug(data);
-        });
-    },   
-    
-    addNewAnswer : function(){
-        var code = CKEDITOR.instances['ed-new-answer'].document.getBody().getHtml();
-        
-        $.post(
-            "/survey/rest/saveAnswer",
-            { text: code }
-        ).done(function(data){
-            console.debug(data);
-            
-            $('ul#existing-answers').prepend(
-                '<li class="btn btn-default">' +
-                code +
-                '</li>'
-            );
-        }).fail(function(data){
-            console.debug(data);
-        });
-    },
-    
-    addSurveyQA : function(qid, qorder, aid, aorder){
-        var data =  {   'qid': qid, 
-                'qorder': qorder, 
-                'aid': aid, 
-                'aorder': aorder, 
-                'survey_id' : window.location.pathname.split('/').pop()
-            };
-        
-        console.debug(data);
-        
-        $.post(
-            "/survey/rest/saveSurveyQA",
-          data  
-        ).done(function(data){
-            console.debug('no-problem');
-            console.debug(data);
-
-            var container = $('#qa-container');
-            container.html( $('#qa-preview').html() );
-            container.children(' button').remove();
-        }).fail(function(data){
-            console.debug('problem');
-            console.debug(data);
-        });
-        
-    },
-    
-    saveAllQuestions : function(){
-        $.post(
-            "/survey/rest/deleteSurveyQA",
-            { 'survey_id' : window.location.pathname.split('/').pop() }  
-        ).done(function(data){
-            console.debug(data);
-            $('#qa-preview').children().each(function(i,e){
-                $(e).children('ul').children('li').each(function(ii, ee){
-                    var qid = $(e).attr('qid');
-                    var qorder = i + 1;
-                    
-                    var aid = $(ee).attr('aid');
-                    var aorder = ii + 1;
-                    tools.addSurveyQA(qid, qorder, aid, aorder);
-                    console.debug(qid + " " + qorder + " " + aid + " " + aorder);
-
-                    var container = $('#qa-container');
-                    container.html( $('#qa-preview').html() );
-                    container.children('button').remove();
-                });
-            });
-        }).fail(function(data){
-            console.debug(data);
-        });
-
-        
-        
-        
-    },
-    
-    deleteSurveyAnswer : function(ele){
-        var aid = $(ele).parent().parent().attr('aid');
-        var qid = $(ele).parent().parent().parent().parent().attr('qid');
-        
-        console.debug(aid + ' ' + qid);
-        $.post(
-                "/survey/rest/deleteSurveyAnswer",
-                { 'survey_id' : window.location.pathname.split('/').pop(),
-                  'aid' : aid,
-                  'qid' : qid
-                }  
-            ).done(function(data){
-                console.debug(data);
-                tools.saveAllQuestions();
-            }).fail(function(data){
-                console.debug(data);
-            });
-        $(ele).parent().parent().remove();
-    },
-    
-    deleteSurveyQuestion : function(ele){
-        var qid = $(ele).parent().parent().attr('qid');
-        console.debug(qid);
-
-        $.post(
-                "/survey/rest/deleteSurveyAnswer",
-                { 'survey_id' : window.location.pathname.split('/').pop(),
-                  'aid' : '%',
-                  'qid' : qid
-                }  
-            ).done(function(data){
-                console.debug(data);
-            }).fail(function(data){
-                console.debug(data);
-            });
-        $(ele).parent().parent().remove();
-    },
-    
-    /*
-    saveLists : function(){
-        var lists = [];
-        $('#list-chooser').children('label.btn.active').children().each(function(i,e){
-            lists.push($(e).val());
-        });
-        
-        lists = lists.join(",");
-        $.post(
-            "/survey/rest/saveLists",
-            { 'survey_id' : window.location.pathname.split('/').pop(),
-              'lists' : lists
-            }  
-        ).done(function(data){
-
-        }).fail(function(data){
-            console.debug(data);
-        });
-    },
-    */
-    saveName : function(){
-        var name = $('#survey-name').val();
-        $.post(
-            "/survey/rest/saveName",
-            { 'survey_id' : window.location.pathname.split('/').pop(),
-              'name' : name
-            }  
-        ).done(function(data){
-
-        }).fail(function(data){
-            console.debug(data);
-        });
-    },
-
-    /*
-    insertAd : function(){
-        $('#').append('<li><div>' + $('.ad-preview.selected').html() + '</div></li>');
-        
-        $.post(
-            "/survey/rest/insertAd",
-            { 'survey_id' : window.location.pathname.split('/').pop(),
-              'adid' : $('#').val()
-            }  
-        ).done(function(data){
-
-        }).fail(function(data){
-            console.debug(data);
-        });
-    },
-    */
-
-
-
-    asynchTest : function(success){
-        success({contentId : 1});
-    },
-
-
-
-
-
-
-    previewDropHandler : function(event, ui) {
-        var ele = ui.draggable;
-
-        if (ele.parent().attr('id') == 'existing-questions') {
-            /*            var questionId = ele.attr('qid');
-
-             $('#qa-preview li').removeClass('selected');
-
-             $('li.preview-answer').removeClass('btn-info');
-
-             $('#qa-preview').append("" +
-             '<li qid="' + questionId + '" onclick="$(\'#qa-preview li\').removeClass(\'selected\');$(this).addClass(\'selected\')" class="selected">' +
-             '<button type="button" class="close" aria-label="Close">' +
-             '<span aria-hidden="true" onclick="tools.deleteSurveyQuestion(this)">&times;</span>' +
-             '</button>' +
-             ui.draggable.html() +
-             '<ul id="q-' + ($('qa-preview').children("li").length + 1) + '">' +
-             '</li>');
-             $( "#qa-preview li" ).disableSelection();
-             $('#qa-preview').sortable({
-             update: function (event, ui){
-             tools.saveAllQuestions();
-             }
-             });
-             ui.draggable.remove();
-             */
-        } else if (ui.draggable.parent().attr('id') == 'existing-answers') {
-            /*
-             if ( $('#qa-preview li.selected').length > 0 ){
-             var questionId = $('#qa-preview li.selected').attr('qid');
-             var answerId = ui.draggable.attr('aid');
-             $('li.preview-answer').removeClass('btn-info');
-
-             $('#qa-preview li.selected ul').append(
-             '<li class="preview-answer" onclick="$(\'#qa-preview li\').removeClass(\'btn-info\');$(this).addClass(\'btn-info\')" aid="' + answerId + '">' +
-             '<button type="button" class="close" aria-label="Close">' +
-             '<span aria-hidden="true" onclick="tools.deleteSurveyAnswer(this)">&times;</span>' +
-             '</button>' +
-             ui.draggable.html() +
-             '</li>');
-
-             var qorder = 0;
-             $('#qa-preview').children("li").each(function(i,e){
-             if ($(e).hasClass('selected')){
-             qorder = i + 1;
-             }
-             });
-
-             var aorder = $('#qa-preview li.selected ul').children("li").length;
-             tools.addSurveyQA(questionId, qorder, answerId, aorder);
-
-             }*/
-
-        }
-    }
-
 };
 
 
 
 $(document).ready( function(){
+    var questions = $('#questions').html();
+    var qaid = $('.survey-questions').parent().attr('id').substr(-1);
+    CKEDITOR.instances['ed-' + qaid].setData(questions);
 
-    $('#date').html( new Date().toDateString() );
+
+
+    $('span.tagSurvey').click(tools.tag);
+    $('span.tagContent').click(tools.tag);
+    $('#save-survey-btn').click(tools.saveSurvey);
+
+    // Make survey answers in the q/a editor sortable
+    $('#qa-preview li ul').sortable({ update: function(){
+        $('#save-survey-btn').addClass('btn-info');
+        //tools.saveSurvey()
+    } });
+
+    tools.populateQuestions( function(){
+        $('.existing-container li').draggable( { helper: 'clone' } );
+        $('#existing-questions').children('li').dblclick(function(event){
+            tools.createSurveyQuestion(event.target);
+        });
+    });
+
+    tools.populateAnswers(function(){
+        $('.existing-container li').draggable( { helper: 'clone' } );
+        $('#existing-answers').children('li').dblclick(function(event){
+            tools.createSurveyAnswer(event.target)
+        });
+    });
+
+
+    $('#qa-preview li').click(function () {
+        $('#qa-preview li').removeClass('selected');
+        $(this).addClass('selected');
+    });
+
+    $('.date-container').html( new Date().toDateString() );
 
     $('.toolbox-item').draggable({
         start: function() {
             $('.toolbox-item').tooltip('hide');
         }
     });
-    $('.existing-container li').draggable( { helper: 'clone' } );
+
+    //$('.existing-container li').draggable( { helper: 'clone' } );
 
     var preview = $('#qa-preview');
-    preview.sortable({ update: tools.saveAllQuestions });
+    preview.sortable({ update: function(){
+        $('#save-survey-btn').addClass('btn-info');
+        //tools.saveSurvey()
+    } });
     preview.children().first().addClass('selected');
     preview.droppable({
         accept: ".existing-container li",
@@ -608,7 +780,7 @@ $(document).ready( function(){
     
     $( "#edit-survey" ).sortable({
         update: function (event, ui){
-            //alert();
+            tools.saveOrder();
         }            
     });
     

@@ -38,9 +38,12 @@ class ContentController extends Controller
      */
     public function store(Request $request)
     {
-        $content = new \App\Content;
-        $content->content = $request->get('content');
-        $success = $content->save();
+        error_log($request->get('content'));
+        error_log($request->get('content_id'));
+
+            $content = \App\Content::find( $request->get('content_id') );
+            $content->content = $request->get('content');
+            $success = $content->save();
 
         return (integer) $success;
         /** TODO: ERROR HANDLING -> What are all scenarios that would cause a save to fail */
@@ -95,7 +98,6 @@ class ContentController extends Controller
     {
         $content = \App\Content::find($id);
 
-        // TODO: handle no surveys found
         $surveys = $content->survey->lists('id');
         foreach ($surveys as $survey_id) {
             $survey = \App\Survey::find($survey_id);
@@ -104,6 +106,11 @@ class ContentController extends Controller
             $survey->content()->detach($id);
         }
 
+        $tags = $content->tags->lists('id');
+        foreach ($tags as $tag_id) {
+            // TODO: handle detach fail
+            $content->tags()->detach($tag_id);
+        }
 
         // TODO: ERROR HANDLING
         $content->delete();
@@ -114,9 +121,8 @@ class ContentController extends Controller
     public function attachTag(Request $request){
         $tag_name = $request->get('tag');
         $tag = \App\Tag::where('name', $tag_name)->first();
-        $exists = empty($tag);
 
-        if ($exists){
+        if ( empty($tag) ){
             $tag = new \App\Tag;
             $tag->name = $tag_name;
             $tag->save();

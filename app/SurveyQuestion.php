@@ -25,19 +25,9 @@ class SurveyQuestion extends Model
         return $this->belongsTo('App\Survey');
     }
 
-    /**
-     * We only need the text from the question not the whole object so we just pull that
-     *
-     * @return String question text
-     */
-    public function getText(){
-        //var_dump($this);
-        //echo "\n\n";
-        return DB::table('questions')
-            ->where('id', $this->question_id)
-            ->select('text')
-            ->first()
-            ->text;
+
+    public function question(){
+        return $this->belongsTo('App\Question');
     }
 
 
@@ -47,7 +37,7 @@ class SurveyQuestion extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function surveyAnswers(){
-        return $this->hasMany('App\SurveyAnswer');
+        return $this->belongsToMany('App\SurveyAnswer');
     }
 
 

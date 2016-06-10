@@ -25,18 +25,13 @@ class Survey extends Model
 	}
 
 
-	/**
-	 * Get the filename of the background image
-	 *
-	 * @return mixed
-	 */
-	public function bgImageName(){
-		return DB::table('images')
-			->where('id', $this->bg_image_id)
-			->select('filename')
-			->first()
-			->filename;
+	public function tags()
+	{
+		return $this->belongsToMany('App\Tag')->withTimestamps();
 	}
+	
+
+
 
 	/**
 	 * A survey can have many contents

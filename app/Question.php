@@ -13,10 +13,10 @@ class Question extends Model
      * A Question can belong to many SurveyQuestions
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     *
+     */
     function surveyQquestion(){
-        return $this->hasMany('App\SurveyQuestion');
+        return $this->belongsToMany('App\SurveyQuestion');
     }
-     * */
+
 
 }

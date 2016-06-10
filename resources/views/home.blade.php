@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+
+@if ( count($errors) > 0 )
+    <section class="alert alert-danger" role="alert">
+        That survey doesn't exist
+    </section>
+@endif
+
+
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">

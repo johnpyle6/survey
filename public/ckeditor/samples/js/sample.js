@@ -8,7 +8,7 @@
 if ( CKEDITOR.env.ie && CKEDITOR.env.version < 9 )
 	CKEDITOR.tools.enableHtml5Elements( document );
 
-// The trick to keep the tabs in the sample quite small
+// The trick to keep the editor in the sample quite small
 // unless user specified own height.
 CKEDITOR.config.height = 150;
 CKEDITOR.config.width = 'auto';
@@ -28,7 +28,7 @@ var initSample = ( function() {
 			);
 		}
 
-		// Depending on the wysiwygare plugin availability initialize classic or inline tabs.
+		// Depending on the wysiwygare plugin availability initialize classic or inline editor.
 		if ( wysiwygareaAvailable ) {
 			CKEDITOR.replace( 'editor' );
 		} else {
@@ -36,7 +36,7 @@ var initSample = ( function() {
 			CKEDITOR.inline( 'editor' );
 
 			// TODO we can consider displaying some info box that
-			// without wysiwygarea the classic tabs may not work.
+			// without wysiwygarea the classic editor may not work.
 		}
 	};
 

@@ -26,6 +26,15 @@ class CreateTagsTable extends Migration
             $table->foreign('tag_id')->references('id')->on('tags');
             $table->timestamps();
         });
+
+        Schema::create('survey_tag', function (Blueprint $table) {
+            $table->integer('survey_id')->unsigned()->index();
+            $table->foreign('survey_id')->references('id')->on('surveys');
+
+            $table->integer('tag_id')->unsigned()->index();
+            $table->foreign('tag_id')->references('id')->on('tags');
+            $table->timestamps();
+        });
     }
 
     /**

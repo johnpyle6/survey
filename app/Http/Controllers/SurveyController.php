@@ -31,9 +31,9 @@ class SurveyController extends Controller
      */
     public function create()
     {
-        $new_content = new \App\Content;
-        $new_content->save();
-        return $new_content->id;
+        $new_survey = new \App\Survey;
+        $new_survey->save();
+        return $new_survey;
     }
 
     /**
@@ -44,13 +44,43 @@ class SurveyController extends Controller
      */
     public function store(Request $request)
     {
-        $content = new \App\Content;
-        $content->content = $request->get('content');
-        $success = $content->save();
+        $question_id = $request->get('question_id');
+        $survey_id = $request->get('survey_id');
+        $response = new \stdClass();
 
-        return (integer) $success;
-        /** TODO: ERROR HANDLING -> What are all scenarios that would cause a save to fail */
+        $survey_question = \App\SurveyQuestion::
+            where('question_id', $question_id)
+            ->where('survey_id', $survey_id)
+            ->first();
 
+        if ( is_null($survey_question) ){
+            $survey_question = new \App\SurveyQuestion;
+            $survey_question->question_id = $question_id;
+            $survey_question->survey_id = $survey_id;
+        }
+
+        $survey_question->question_order = $request->get('question_order');
+        $survey_question->save();
+        $response->survey_question_id = $survey_question->id;
+        $response->question_id = $question_id;
+        $response->survey_answers = [];
+
+        $ids = explode(',', $request->get('answer_id'));
+        //$id = $request->get('answer_id');
+        foreach ($ids as $key => $id) {
+            $survey_answer = new \App\SurveyAnswer;
+            $survey_answer->answer_id = $id;
+            $survey_answer->answer_order = $key;
+            $survey_answer->save();
+            $survey_question->surveyAnswers()->attach($survey_answer->id);
+            $response_answer = new \stdClass();
+            $response_answer->survey_answer_id = $survey_answer->id;
+            $response_answer->answer_id = $id;
+            $response->survey_answers[] = $response_answer;
+        }
+
+
+        return json_encode($response);
     }
 
     /**
@@ -61,7 +91,8 @@ class SurveyController extends Controller
      */
     public function show($id)
     {
-        return \App\Content::find($id);
+        $survey = \App\Survey::find($id);
+        return view('survey.layouts.surveyApp', ['survey' => $survey, ]);
     }
 
     /**
@@ -70,12 +101,19 @@ class SurveyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    /*
-    public function edit($id)
+
+    public function edit($survey_id)
     {
-        //
+        $survey = \App\Survey::find($survey_id);
+        $survey->surveyQuestions = $survey->surveyQuestions->sortBy('question_order');
+        foreach ($survey->surveyQuestions as $question){
+            $question->surveyAnswers = $question->surveyAnswers->sortBy('answer_order');
+        }
+        $survey->images = \App\Image::lists('filename');
+        $view = ( is_null($survey) ) ? $view = 'survey.error' : 'survey.create';
+        return view($view, ['survey' => $survey]);
     }
-    */
+
 
     /**
      * Update the specified resource in storage.
@@ -84,12 +122,15 @@ class SurveyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    /*
+
     public function update(Request $request, $id)
     {
-        //
+        $survey = \App\Survey::find($id);
+        $survey->name = $request->get('name');
+        $survey->save();
+        return $survey;
     }
-    */
+
 
     /**
      * Remove the specified resource from storage.
@@ -116,17 +157,56 @@ class SurveyController extends Controller
 
         return "true";
     }
+
+
+
+    public function attachContent(Request $request)
+    {
+        $survey = \App\Survey::find($request->get('survey_id'));
+        if ( !empty($survey) ) {
+            $survey->content()->attach($request->get('content_id'));
+        }
+    }
+
+    public function detachContent(Request $request)
+    {
+        $survey = \App\Survey::find($request->get('survey_id'));
+        if ( !empty($survey) ) {
+            $survey->content()->detach($request->get('content_id'));
+        }
+    }
+
+
+    public function attachTag(Request $request){
+        $tag_name = $request->get('tag');
+        $tag = \App\Tag::where('name', $tag_name)->first();
+
+        if ( empty($tag) ){
+            $tag = new \App\Tag;
+            $tag->name = $tag_name;
+            $tag->save();
+        }
+
+        $survey = \App\Survey::find( $request->get('survey_id') );
+        if (!empty($survey)) {
+            $survey->tags()->attach($tag->id);
+        }
+    }
+
     
+    public function setOrder(Request $request){
+        $survey = \App\Survey::find($request->get('survey_id'));
+        $content_id = $request->get('content_id');
+        $order = $request->get('order');
+        $survey->content()->detach( $content_id);
+        $survey->content()->attach( $content_id, ['order' => $order] );
+
+        // TODO: doing it like this adds another row to the pivot table
+        //$survey->content()->sync([$content_id => ['order' => $order] ], false);
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
     
     
     
@@ -147,72 +227,6 @@ class SurveyController extends Controller
         $survey = Survey::where('id', 1)->first();
         return view('survey.layouts.surveyApp', ['survey' => $survey, ]);
     }
-
-
-
-
-    function edit($survey_id)
-    {
-        if ($survey_id == "new") {
-            $survey_id = $this->createSurvey();
-            return redirect('edit/' . $survey_id);
-        } else {
-            return view('survey.create');
-            /*$components = DB::select("
-                SELECT a.order, b.content, b.id
-                FROM survey_components a, components b
-                WHERE a.survey_id = $survey_id
-                    AND b.id = a.component_id
-                ORDER BY a.order");
-
-            $images = DB::select("
-                SELECT filename, id
-                FROM survey_images
-            ");
-
-            $layout = DB::select("
-                SELECT 
-                    a.name, a.footer, a.date, b.filename bgimage
-                FROM 
-                    layouts a
-                LEFT JOIN images b
-                	ON a.bg_image_id = b.id
-                WHERE 
-                    a.id = $survey_id");
-            if ($layout) {
-                $layout = $layout[0];
-            }
-
-
-            $questions = DB::select("
-                SELECT id, text
-                FROM questions
-            ");
-
-            $answers = DB::select("
-                SELECT id, text
-                FROM answers 
-            ");
-
-            $survey = new \stdClass();
-            $survey->id = $survey_id;
-            $survey->questions = $this->get_survey_questions($survey_id);
-            $lists = $this->getLists();
-            $ads = $this->getAds();
-            */
-
-            //print_r($components);
-            
-                //compact($components, $images, $layout, $questions, $answers, $survey, $lists, $ads));
-
-        }
-    }
-
-
-
-
-
-
 
 
     function view($survey_id, $tag = 'none'){
@@ -238,184 +252,6 @@ class SurveyController extends Controller
     }
     
 
-
-
-
-
-/************************************************
- * Create Survey Business Logic
-*************************************************/
-
-    function createSurvey(){
-        $id = DB::table('surveys')->insertGetId([]);
-        return $id;
-    }
-
-/************************************************
- * CRUD - library
- *************************************************/
-    function saveComponent(Request $req){
-        // TODO: test sanitize
-        //$html = HTML::entities($req->get('$html'));
-
-        //TODO: extract create component
-        $id = DB::table('components')->insertGetId([
-            'content' => $req->get('html'),
-        ]);
-
-        return $id;
-    }
-
-    function editComponent(Request $req){
-        // TODO: sanitize
-        $success = DB::table( 'components' )
-            ->where( 'id', $req->get('id') )
-            ->update(['content' => $req->get('html')]);
-        
-        return $success;
-    }
-
-    function saveImage(Request $req){
-        // TODO: is background image?
-        if ( $req->hasFile('image')){
-            $file = $req->file('image');
-            if ($file->isValid()){
-                $file->move(public_path() . '/images', $file->getClientOriginalName());
-            }
-        }
-
-        DB::table('survey_images')->insert(
-            [ 'filename' => $file->getClientOriginalName() ]
-        );
-
-        return redirect('survey/edit/' . $req->get('survey_id'));
-    }
-
-    function saveQuestion(Request $request){
-        $text = $request->get('text');
-        $id = DB::table('questions')->insertGetId(
-            ['text' => $text]
-        );
-
-        return "$id";
-    }
-
-    function saveAnswer(Request $request){
-        $text = $request->get('text');
-        $id = DB::table('survey_answers')->insertGetId(
-            ['text' => $text]
-        );
-
-        return "$id";
-    }
-
-
-
-/************************************************
- * CRUD - layouts
- *************************************************/
-    // TODO: combine into one update function
-    function saveLayout(Request $req){
-        $update = [];
-        if ($req->get('bg_image_id')){
-            $update['bg_image_id'] = $req->get('bg_image_id');
-        }
-
-        if ($req->get('lists')){
-            $update['lists'] = $req->get('lists');
-        }
-
-        if ($req->get('name')){
-            $update['name'] = $req->get('name');
-        }
-
-        if ($req->get('footer')){
-            $update['footer'] = $req->get('footer');
-        }
-
-        // TODO: sanitize
-        DB::table('layouts')
-            ->where('id', $req->get('survey_id'))
-            ->update($update);
-    }
-
-    /*
-    function saveBgImage(Request $req){
-        // TODO: sanitize
-        DB::table('layouts')
-            ->where('id', $req->get('survey_id'))
-            ->update(['bg_image_id' => $req->get('bg_image_id')]);
-
-        echo true;
-    }
-
-    function saveLists(Request $req){
-        DB::table("layouts")
-            ->where('id', '=', $req->get('survey_id'))
-            ->update(['lists' => $req->get('lists')]);
-    }
-
-    function saveName(Request $req){
-        DB::table("layouts")
-            ->where('id', '=', $req->get('survey_id'))
-            ->update(['name' => $req->get('name')]);
-    }
-
-    function saveFooter(Request $req){
-        // TODO: sanitize
-        // TODO: save this as a component and save the component id in layouts
-        DB::table('layouts')
-            ->where('id', $req->get('survey_id'))
-            ->update(['footer' => $req->get('footer')]);
-    }
-    */
-
-
-
-/************************************************
- * CRUD - maps
- *************************************************/
-
-    function saveSurveyAnswer(Request $request){
-        $question_id = $request->get('qid');
-        $question_order = $request->get('qorder');
-        $answer_id = $request->get('aid');
-        $answer_order = $request->get('aorder');
-        $survey_id = $request->get('survey_id');
-
-        $id = DB::table('survey_questions')->insertGetId(
-            compact( $survey_id, $question_id, $question_order, $answer_id, $answer_order)
-        );
-
-        // TODO: Proper error handling
-        return $id;
-    }
-
-    function deleteSurveyAnswer(Request $request){
-        DB::table('survey_survey')
-            ->where('survey_id', '=', $request->get('survey_id'))
-            ->where('question_id', '=', $request->get('qid'))
-            ->where('answer_id', 'LIKE', $request->get('aid'))
-            ->delete();
-    }
-
-    function add_component_to_survey(Request $req){
-        $success = DB::table('survey_components')->insert([
-            'survey_id' => $req->get('survey_id'),
-            'component_id' => $req->get('component_id'),
-            'order' => $req->get('order'),
-        ]);
-
-        return $success;
-    }
-
-    // TODO: rename to delete_content_from_survey
-    function remove_content_from_survey(Request $req){
-        $success = DB::table('components')
-            ->where('component_id', $req->get('id'))
-            ->delete();
-        return $success;
-    }
 
 
 

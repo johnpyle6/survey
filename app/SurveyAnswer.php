@@ -17,6 +17,7 @@ class SurveyAnswer extends Model
         return $this->belongsTo('App\Answer');
     }
 
+    
     public function survey_question(){
         return $this->belongsToMany('App\SurveyQuestion');
     }

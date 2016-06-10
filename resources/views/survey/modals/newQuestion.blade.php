@@ -15,7 +15,7 @@
             
             
           		<p>Add new question:
-          		<div class="ed-comp"  id="ed-comp-new-question col-md-6">
+          		<div class="ed-comp col-md-6"  id="ed-comp-new-question">
                     <textarea class="" id="ed-new-question"></textarea>
                     <br>
                 </div>
@@ -32,7 +32,7 @@
             </div>
       		<div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="tools.addNewQuestion()" data-dismiss="modal">Save changes</button>
+                <button type="button" class="btn btn-primary" onclick="tools.saveQuestion()" data-dismiss="modal">Save changes</button>
       		</div>
     	</div><!-- /.modal-content -->
   	</div><!-- /.modal-dialog -->

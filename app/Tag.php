@@ -16,4 +16,13 @@ class Tag extends Model
         return $this->belongsToMany('App\Content');
     }
 
+    /**
+     * Get all the tags for each survey
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    function survey()
+    {
+        return $this->belongsToMany('App\Survey');
+    }
+
 }

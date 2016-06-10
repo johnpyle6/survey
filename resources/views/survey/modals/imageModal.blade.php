@@ -11,20 +11,18 @@
       
       
             <div class="row">
-                <div class="col-xs-3 col-md-3">
-                  <a href="#" class="thumbnail" onclick="imgSelect(this)">
-                    <img imgid="1" src="/images/trump.jpg" alt="...">
-                  </a>
-                </div>
-                <div class="col-xs-3 col-md-3">
-                    <a href="#" class="thumbnail" onclick="imgSelect(this)">
-                        <img imgid="2" src="/images/trump2.jpg" alt="...">
+                <div class="" style="text-align: center">
+                    @foreach ($survey->images as $image)
+                    <a href="#" class="thumbnail" >
+                        <img src="/images/{{ $image }}" alt="..." onclick="imgSelect(this)">
                     </a>
+                    @endforeach
                 </div>
+
             </div>  
         
     		<div id="image-upload">
-    			{!! Form::open(['files' => true, 'url' => 'survey/rest/saveImage', 'class' => 'form-inline', 'id' => 'image-form']) !!}
+    			{!! Form::open(['files' => true, 'url' => '/image', 'class' => 'form-inline', 'id' => 'image-form']) !!}
                 <div class="form-group">
 
     			{!! Form::file('image', ['class' => 'form-control']) !!}

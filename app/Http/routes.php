@@ -31,22 +31,35 @@ Route::group(['middleware' => 'web'], function () {
  * Current Routes for survey 
  *
 Route::post('survey/home', 'SurveyController@home');
-Route::get('survey/view/{survey_id}/{tag_id?}', 'SurveyController@view');
+
 Route::get('survey/thank-you/{survey_id}', 'SurveyController@thankYou');
 Route::get('survey/results/{survey_id}', 'SurveyController@getResults');
 Route::post('survey/submit', 'SurveyController@submit');
+*/
 
-/**
- * Routes for survey creation
- */
-Route::get('edit/{survey_id}', 'SurveyController@edit');
+Route::get('survey/view/{survey_id}/{tag_id?}', 'SurveyController@view');
+Route::get('survey/edit/{survey_id}', 'SurveyController@edit');
+Route::post('survey/order', 'SurveyController@setOrder');
+Route::post('survey/attach', 'SurveyController@attachContent');
+Route::post('survey/detach', 'SurveyController@detachContent');
+Route::post('survey/tag', 'SurveyController@attachTag');
+
+
 
 Route::post('content/tag', 'ContentController@attachTag');
 
 Route::resource('content', 'ContentController',['parameters' => [
     'content' => 'contentId', 'content' => 'survey_id']]);
 
+Route::resource('question', 'QuestionController');
+Route::resource('answer', 'AnswerController');
+Route::resource('survey', 'SurveyController');
+Route::resource('survey-question', 'SurveyQuestionController');
+Route::resource('survey-answer', 'SurveyAnswerController');
+Route::resource('image', 'ImageController');
 
+
+Route::delete('survey-answer/{answer_id}', 'SurveyController@deleteSurveyAnswer');
 
 /*
 Route::get('survey/getAnswers', 'SurveyController@getAnswers');

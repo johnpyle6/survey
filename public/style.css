@@ -29,11 +29,17 @@
     background: transparent url(/images/bg-color.png) no-repeat 0 0;	
 }
 
+.thumbnail
+{
+	display: inline-block;
+}
 
 .thumbnail>img
 {
 	max-height: 100px;
 }
+
+
 
 .tab-content
 {
@@ -61,6 +67,12 @@
 	max-width: 800px;
 }
 
+#edit-survey li
+{
+	margin-bottom: 5px;
+	min-height: 35px;
+}
+
 #edit-survey li, #edit-survey li ol li ul li
 {
 	list-style: none;
@@ -76,9 +88,9 @@
 	cursor: move;
 }
 
-#edit-survey img
+#editor-template
 {
-    max-width: 630px;
+	display: none;
 }
 
 .ed-cont
@@ -86,10 +98,19 @@
 	display: none;
 }
 
+.content-edit-buttons
+{
+	position: absolute;
+	display: none;
+	left: 70%;
+
+}
 
 .editBtn
 {
-    float:right;
+
+	cursor: pointer !important;
+	z-index: 100;
 }
 
 

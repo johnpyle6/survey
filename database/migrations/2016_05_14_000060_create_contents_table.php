@@ -15,7 +15,7 @@ class CreateContentsTable extends Migration
         Schema::create('contents', function (Blueprint $table) {
             $table->increments('id');
             $table->text("content");
-            $table->boolean("content_type_id");
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -25,6 +25,8 @@ class CreateContentsTable extends Migration
 
             $table->integer('survey_id')->unsigned();
             $table->foreign('survey_id')->references('id')->on('surveys')->delete('cascade');;
+
+            $table->smallInteger('order');
 
             $table->timestamps();
         });

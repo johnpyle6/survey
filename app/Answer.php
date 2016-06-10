@@ -9,12 +9,5 @@ class Answer extends Model
     protected $fillable = [];
 	public $timestamps = false;
 
-    /**
-     * An Answer can belong to many SurveyAnswers
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    function surveyAnswer(){
-        return $this->hasMany('App\SurveyAnswer');
-    }
+   
 }
